@@ -1,0 +1,775 @@
+Fistbump: A Memory-Hard Decentralized Naming Protocol
+
+Abstract
+
+Fistbump is a decentralized naming protocol that registers human-readable
+top-level domains and on-chain subdomains on a public blockchain with native
+DNS record storage. It uses Balloon Hashing, a provably memory-hard
+proof-of-work function requiring 512 MB of RAM per proof attempt, designed to
+reduce the economic advantage of ASICs and GPUs. Names are allocated through
+Vickrey (sealed-bid, second-price) auctions with minimum bids tied to the
+block reward. Registration fees are split between a burn and a development
+fund; annual renewal fees prevent costless squatting and sustain protocol
+funding without pre-mines, airdrops, or token treasuries. The reference node,
+fbd, is written in Swift and includes a built-in authoritative DNS server that
+responds to standard DNS queries using on-chain records.
+
+
+1. Background
+
+1.1 The DNS Root Zone
+
+The Domain Name System maps human-readable names to machine-readable addresses
+and is the entry point for nearly all internet communication. The root zone is
+managed by IANA (a function of ICANN) and delegates authority to thirteen root
+server operators, hundreds of accredited registrars, and dozens of certificate
+authorities. This hierarchy creates known vulnerabilities:
+
+  Domain seizure. The US Department of Justice has seized thousands of domains
+  through civil forfeiture [4].
+
+  Infrastructure fragility. The 2016 Dyn DDoS attack disrupted Twitter, Reddit,
+  GitHub, and other major services by targeting a single DNS provider [5].
+
+  Barriers to entry. Applying for a new gTLD costs $185,000, limiting
+  participation to well-funded organizations.
+
+  Certificate authority compromise. The DigiNotar breach [6] and Symantec
+  mis-issuance incidents [7] demonstrated weaknesses in the web PKI built on DNS.
+  DANE/TLSA records, which Fistbump supports natively, offer certificate
+  validation without trusted third parties.
+
+1.2 Prior Work
+
+Several projects have attempted decentralized naming:
+
+  Namecoin (2011). A merge-mined Bitcoin fork with a .bit namespace outside the
+  DNS hierarchy. Required special resolver software. A 2015 Princeton study
+  found 28 of 120,000 registered .bit domains in use [3].
+
+  ENS (2017). A naming layer for Ethereum that stores resolver records, not DNS
+  records. Runs on Ethereum where gas fees make operations expensive. Uses
+  first-come-first-served registration with no price discovery. .eth names are
+  not top-level domains.
+
+  Handshake (2020). The most architecturally serious attempt, with native
+  covenants, on-chain DNS records, and root zone replacement. Its BLAKE2b+SHA3
+  PoW was dominated by ASICs (Bitmain Antminer HS3). Free renewals enabled
+  costless squatting.
+
+  Unstoppable Domains. NFT-based domains on Polygon with no DNS records. Names
+  require browser extensions to resolve. The company has filed patents on its
+  resolution mechanisms [8].
+
+
+2. Protocol Overview
+
+Fistbump is a UTXO-based blockchain where every transaction output carries a
+covenant: a typed data structure that encodes the output's role in the naming
+protocol. Covenants enforce the state machine of name auctions (open, bid,
+reveal, register, update, renew, transfer) without complex scripting. Name state
+is stored in an Urkel tree, a Merkleized trie whose root is committed in every
+block header, enabling light clients to verify name ownership and DNS records
+with compact proofs. The proof-of-work function, Balloon Hashing, requires
+512 MB of RAM per attempt, shifting the mining bottleneck from computation to
+memory bandwidth and narrowing the efficiency gap between commodity hardware and
+specialized mining devices.
+
+The fbd node includes a built-in authoritative DNS server. When a name is
+registered and its owner attaches DNS resource records (A, AAAA, NS, MX, CNAME,
+TXT, TLSA, CAA, and others), those records are stored on-chain and served in
+response to standard DNS queries. TLD owners can enable on-chain subdomain
+auctions, creating independent names (e.g., "example.fistbump") with their own
+ownership, records, and lifecycle. All existing ICANN TLDs are reserved at
+genesis to avoid namespace collisions.
+
+Key parameters: total supply of 1,051,200,000 FBC, initial block reward of
+500 FBC, halving every four years, two-minute block time. No pre-mine, ICO,
+airdrop, or founder reward. Names are allocated through Vickrey (sealed-bid,
+second-price) auctions with minimum bids tied to the block reward. Registration
+fees are split 50/50 between a burn and a development fund. Renewal fees (1% of
+registration price annually) prevent costless squatting and sustain protocol
+funding. The development fund is sent to a multisig address controlled by the
+core contributors. The signer set and threshold are implementation-level
+parameters published by the project and are not consensus-critical. This
+introduces social trust in fund stewardship, but isolates that trust assumption
+from consensus validity and allows governance to evolve without changing the
+protocol rules. The node is written in Swift.
+
+2.1 Example: Registering and Using a Name
+
+The following walkthrough illustrates the full lifecycle of a Fistbump name.
+
+  1. Mine or acquire FBC. A user runs fbd's built-in CPU miner on commodity
+     hardware. Each proof attempt allocates a 512 MB scratchpad. When the miner
+     finds a valid block, the coinbase reward (500 FBC at genesis) matures after
+     100 confirmations and becomes spendable.
+
+  2. Open an auction. The user wants to register "fbd" (3 bytes, so
+     premium). They provide a DNSSEC proof demonstrating ownership of
+     fbd.dev and broadcast an OPEN covenant to start the auction. Premium
+     names are available at genesis with no rollout delay.
+
+  3. Bid. During the 3-day bidding window, the user submits a blind bid by
+     publishing a hash commitment: blind = BLAKE2b-256(value || nonce). The
+     on-chain lockup is 80,000 FBC; the actual bid hidden inside the commitment
+     is 60,000 FBC. (The minimum bid for this premium name is 50,000 FBC.)
+
+  4. Reveal. During the 1-day reveal window, the user broadcasts a REVEAL
+     covenant containing the nonce. The chain verifies the commitment. A second
+     bidder reveals a bid of 55,000 FBC.
+
+  5. Register. The user wins and broadcasts a REGISTER covenant. Because this is
+     a Vickrey auction, the price paid is the second-highest bid: 55,000 FBC.
+     The remaining 5,000 FBC (60,000 - 55,000) plus the 20,000 FBC lockup
+     surplus (80,000 - 60,000) are returned. Of the 55,000 FBC price, 27,500
+     is burned and 27,500 goes to the development fund.
+
+     At registration, the user attaches DNS records:
+       A      198.51.100.12
+       AAAA   2001:db8::1a2b:3c4d
+       TLSA   443 TCP 3 1 1 <certificate hash>
+
+  6. Resolve. A DNS client pointed at the fbd node can query the name:
+
+       dig @<fbd-node> fbd A
+       ;; ANSWER SECTION:
+       fbd.    300    IN    A    198.51.100.12
+
+     The TLSA record enables DANE certificate validation without a certificate
+     authority.
+
+  7. Renew. Before 262,800 blocks (~1 year) elapse, the user broadcasts a RENEW
+     covenant and pays 1% of 55,000 FBC = 550 FBC (the renewal fee, paid to the
+     development fund). The name remains registered for another year.
+
+
+3. Consensus
+
+3.1 Proof of Work: Balloon Hashing
+
+Fistbump uses Balloon Hashing, a memory-hard algorithm proposed by Boneh,
+Corrigan-Gibbs, and Schechter [1]. Unlike earlier memory-hard functions (Scrypt,
+Ethash) whose security relies on heuristic arguments, Balloon Hashing has a
+formal proof of memory hardness.
+
+The algorithm operates in two phases:
+
+  Expand. A pseudorandom scratchpad is filled sequentially. Each 32-byte slot is
+  derived from the previous slot and the input via BLAKE2b-256. The entire
+  scratchpad must be allocated and populated before proceeding.
+
+  Mix. The scratchpad is traversed again. Each slot is updated by hashing it
+  with pseudorandomly selected neighbor slots, creating data dependencies across
+  the entire scratchpad. These dependencies prevent time-memory trade-offs:
+  storing only a fraction of the scratchpad requires recomputing missing slots,
+  costing more time than the memory saved.
+
+Parameters:
+
+  Scratchpad slots:    16,777,216  (2^24 slots x 32 bytes = 512 MB)
+  Mixing rounds:       1
+  Neighbors per round: 1
+  Inner hash:          BLAKE2b-256
+
+PoW input construction:
+
+  password = BLAKE2b-256(
+    prevBlock || merkleRoot || witnessRoot ||
+    treeRoot || reservedRoot || time || bits || version
+  )
+
+  salt = nonce (4 bytes) || extraNonce (24 bytes)
+
+  powHash = BalloonHash(password, salt, slots, rounds, delta)
+
+A block is valid when powHash is numerically less than or equal to the target
+derived from the compact difficulty bits in the header.
+
+3.2 Why Memory Hardness Raises the Cost of Specialized Hardware
+
+Bitcoin's SHA-256 moved from CPUs to ASICs within three years. Litecoin's
+Scrypt was defeated by Scrypt ASICs within two. Handshake's BLAKE2b+SHA3 was
+dominated by Bitmain within months. In every case, a compute-bound hash function
+was efficiently implemented in custom silicon.
+
+Memory-hard functions shift the bottleneck from computation to memory bandwidth:
+
+  ASIC resistance. An ASIC for Balloon Hashing requires 512 MB of DRAM per
+  mining core. DRAM is a commodity component with identical cost whether on an
+  ASIC package or in a desktop DIMM. The computational work (BLAKE2b-256) is
+  trivial relative to memory access time, reducing the likely efficiency gains
+  from custom silicon.
+
+  GPU resistance. GPUs parallelize through thousands of threads with small local
+  memory (48-128 KB per SM). A 512 MB scratchpad per thread far exceeds this. A
+  GPU with 16 GB VRAM could run at most 32 parallel instances versus thousands
+  of SHA-256 instances. GPUs are expected to have a narrower advantage over CPUs
+  than in compute-bound PoW systems.
+
+  FPGA resistance. FPGAs have less on-chip memory than GPUs and require external
+  DRAM, limiting their advantage over commodity hardware.
+
+Balloon Hashing's provable memory hardness (Theorem 3 in [1]) establishes a
+lower bound on memory use proportional to scratchpad size, regardless of
+additional computation. This is consistent with Alwen and Serbinenko's
+formalization of cumulative memory complexity [2].
+
+  Algorithm        Memory    Provably Hard   Used By        Status
+  -----------------------------------------------------------------------
+  Scrypt           128 KB    No              Litecoin       ASIC-defeated
+  Ethash           4+ GB     No              Ethereum (PoW) Retired (PoS)
+  RandomX          2 GB      No              Monero         Active, CPU-only
+  Balloon Hash     512 MB    Yes             Fistbump       Active
+
+To our knowledge, Balloon Hashing is the only proof-of-work function currently
+used in a live naming protocol that is both provably memory-hard and tuned to a
+scratchpad size large enough to substantially limit GPU parallelism while small
+enough to run on any modern computer. No PoW design can guarantee permanent
+resistance to hardware optimization or mining concentration, but memory hardness
+raises the cost of specialization by making memory bandwidth and capacity the
+dominant constraints.
+
+3.3 Difficulty Adjustment
+
+Difficulty retargets every block using a 72-block sliding window. The algorithm
+selects the median-of-three blocks at window boundaries to resist timestamp
+manipulation, computes actual elapsed time, clamps it to between one quarter and
+four times the expected time, and adjusts the target proportionally. Per-block
+adjustment is important for a memory-hard chain where hash rate is elastic:
+miners enter and exit by starting or stopping a process on commodity hardware.
+
+3.4 Block Structure
+
+Each block header is 236 bytes:
+
+  Preheader (76 bytes):
+    nonce            4 bytes    Miner-iterated counter
+    time             8 bytes    Unix timestamp
+    prevBlock       32 bytes    Hash of previous block
+    treeRoot        32 bytes    Urkel trie root
+
+  Subheader (128 bytes):
+    extraNonce      24 bytes    Additional miner-malleable space
+    reservedRoot    32 bytes    Reserved for future use
+    witnessRoot     32 bytes    Witness commitment Merkle root
+    merkleRoot      32 bytes    Transaction Merkle root
+    version          4 bytes    Protocol version
+    bits             4 bytes    Compact difficulty target
+
+  Mask (32 bytes):
+    mask            32 bytes    Reserved (zero-filled)
+
+Block weight = (header size x 4) + transaction size. Maximum block weight:
+4,000,000. Maximum non-witness block size: 1,000,000 bytes.
+
+
+4. Naming System
+
+4.1 Overview
+
+Names are human-readable top-level domains registered through on-chain
+auctions. Owners attach DNS resource records directly to the blockchain. TLD
+owners can enable on-chain subdomain auctions, creating independent names (e.g.,
+"example.fistbump") with their own ownership and lifecycle.
+
+Names are stored in an Urkel tree (Section 9) keyed by SHA3-256(name). The trie
+root is committed in every block header, enabling light clients to verify name
+state with compact inclusion and exclusion proofs.
+
+4.2 Name Rules
+
+  Label length:       1-63 bytes per label (each part between dots)
+  Total length:       1-253 bytes (DNS maximum)
+  Valid characters:   lowercase a-z, digits 0-9, hyphens
+  Label separators:   dots (for subdomains only)
+  Case:               lowercase only (no Unicode)
+  Blacklisted:        "example", "invalid", "local", "localhost", "onion",
+                      "test"
+  ICANN reserved:     All ICANN TLDs at genesis are permanently reserved
+
+The blacklist contains IANA special-use domains (RFC 6761) and the Tor hidden
+service TLD (RFC 7686). If ICANN later assigns a TLD matching an existing
+Fistbump name, the Fistbump registration is honored.
+
+4.3 Premium Names
+
+Names of 6 bytes or fewer are premium. Opening an auction for a premium name
+requires a DNSSEC proof of ownership of the corresponding domain under a
+qualifying ICANN TLD:
+
+  com, net, org, gov, io, app, dev, xyz
+
+These TLDs were chosen because they represent the most widely used namespaces
+where existing brand and identity claims are concentrated. A fixed list avoids
+governance disputes and oracle dependence; the goal is not exhaustive trademark
+mapping, but a narrow gate for the most likely collision zones. The list is
+fixed at genesis.
+
+For example, claiming "fistbump" requires proving ownership of fistbump.org,
+fistbump.com, or another qualifying domain. DNSSEC proofs are validated on-chain
+with a 3,600-second grace period for RRSIG temporal validity.
+
+This is broader than Handshake's approach (Alexa top 100,000 only), ensuring all
+common words, brand names, and short identifiers require demonstrated ownership
+regardless of external rankings.
+
+Premium names are available at genesis and are not subject to the rollout
+schedule.
+
+4.4 Name Rollout
+
+Non-premium names are released over 60 days to prevent a land rush:
+
+  day = SHA3-256(name) mod 60
+
+Rollout begins at block 10,080. A new batch becomes available every 720 blocks
+(approximately one day).
+
+4.5 Auction Mechanism
+
+Names are allocated through Vickrey (sealed-bid, second-price) auctions. Section
+2.1 walks through a complete example. The formal parameters:
+
+  Phase        Duration                 Action
+  OPEN         30 blocks (~1 hour)      Broadcast OPEN covenant to start auction
+  BID          2,160 blocks (~3 days)   Submit blind bids: BLAKE2b-256(value || nonce)
+  REVEAL       720 blocks (~1 day)      Reveal nonces; unrevealed bids are forfeited
+  REGISTER     2,130 blocks (~71 hrs)   Winner registers, pays second-highest bid
+
+  Total cycle: approximately 7 days.
+
+The on-chain lockup must be greater than or equal to the actual bid; the
+difference is returned after reveal. The winner pays the greater of the
+second-highest bid or the minimum bid (Vickrey second-price), making truthful
+bidding the dominant strategy. Minimum bids are tied to the block reward and
+halve automatically:
+
+  Premium TLDs (<=6 bytes):  100x block reward  (50,000 FBC at genesis)
+  Regular TLDs:               20x block reward  (10,000 FBC at genesis)
+  Subdomains:                0.2x block reward  (100 FBC at genesis)
+
+Fee split for TLDs: 50% burned, 50% to development fund. For subdomains, the
+non-burned portion is split between ancestor owners and the development fund
+(see Section 4.8). The owner may attach initial DNS records at registration.
+
+For subdomain auctions, the OPEN covenant includes the parent name's hash,
+validated against on-chain state. Losing bidders reclaim their funds via REDEEM
+after the reveal period.
+
+4.6 Post-Registration Operations
+
+  UPDATE      Change DNS records or set flags (e.g., auctionSubdomains).
+  RENEW       Extend ownership for one year. Required within 262,800 blocks
+              (~1 year). Fee: 1% of registration price, floored at the minimum
+              bid for that name's level. Paid to the development fund.
+  TRANSFER    Initiate transfer to a new address. 360-block lockup (~12 hours).
+  FINALIZE    Complete a pending transfer.
+  REVOKE      Burn a name and its locked value to prevent an attacker from
+              completing a stolen transfer. The name reopens for auction after
+              5,040 blocks (~7 days).
+
+4.7 On-Chain DNS Records
+
+Registered names store DNS resource records on-chain:
+
+  DS        DNSSEC delegation signer
+  NS        Name server delegation
+  GLUE4     IPv4 glue record (for self-referential NS)
+  GLUE6     IPv6 glue record
+  SYNTH4    Synthetic IPv4 record
+  SYNTH6    Synthetic IPv6 record
+  TXT       Text record
+  A         IPv4 address
+  AAAA      IPv6 address
+  CNAME     Canonical name alias
+  MX        Mail exchange
+  TLSA      TLS certificate association (DANE), with port and protocol
+  CAA       Certificate Authority Authorization
+  SUB       Inline subdomain record (single label + nested records)
+
+TLSA records include port (UInt16), IANA protocol number (6=TCP, 17=UDP,
+132=SCTP), DANE usage, selector, matching type, and certificate data. The DNS
+server synthesizes the standard DANE owner name (_port._proto.name) for TLSA
+queries.
+
+Maximum resource data per name: 512 bytes. This ceiling accommodates typical DNS
+configurations (multiple A/AAAA records, TLSA, TXT, MX) while bounding the
+per-name state that every full node must store. The fbd node includes a built-in
+authoritative DNS server that resolves queries against on-chain state.
+
+4.8 On-Chain Subdomains
+
+Fistbump supports fully on-chain subdomains: names like "example.fistbump" and
+"shop.example.fistbump" registered, auctioned, and resolved entirely on-chain.
+Unlike traditional DNS subdomains (created off-chain by the parent's nameserver
+operator), Fistbump subdomains are independent on-chain names with their own
+ownership, records, auction history, and renewal lifecycle. The parent cannot
+unilaterally revoke or modify a subdomain once registered.
+
+4.8.1 Enabling Subdomains
+
+A TLD owner enables subdomains by setting the auctionSubdomains flag via UPDATE
+(bit 0 of a one-byte flags field). Once set, this flag is permanent and cannot
+be unset. This permanence is critical: subdomain owners must be confident that
+their names will not be orphaned by the parent disabling support.
+
+The flag is preserved through name expiration and re-auction. Even if the TLD
+expires, subdomains continue to exist with their own independent renewal
+lifecycles.
+
+4.8.2 Subdomain Registration
+
+Subdomains use the same Vickrey auction with two additional requirements:
+
+  Parent validation. The OPEN covenant includes the SHA3-256 hash of the parent
+  name. The protocol verifies that the parent exists, has auctionSubdomains set,
+  and that the hash matches.
+
+  Covenant structure. Subdomain OPEN covenants carry 4 items (nameHash, height,
+  rawName, parentHash) compared to 3 for TLDs. Subdomain BID covenants carry 5
+  items (nameHash, height, rawName, blind, parentHash) compared to 4 for TLDs.
+  Subdomains do not require DNSSEC proofs because they are gated by the parent's
+  auctionSubdomains flag instead.
+
+4.8.3 Payment Splitting
+
+Subdomain registration fees are split among three parties:
+
+  Burn:       50% of the registration price (same as TLDs)
+  Ancestors:  25%, split evenly among all ancestor owners
+  Dev fund:   25%
+
+For "shop.example.fistbump", the ancestors are "example.fistbump" and
+"fistbump" (12.5% each). If an ancestor has expired, its share goes to the
+development fund. This incentivizes TLD owners and mid-level names to enable
+subdomains.
+
+4.8.4 NameState Extensions
+
+Subdomain support adds two fields to each name's on-chain state:
+
+  flags        UInt8    Bit flags. Bit 0 = auctionSubdomains.
+  parentHash   32 bytes SHA3-256 hash of direct parent. Empty for TLDs.
+
+Both fields are preserved through name expiration.
+
+4.8.5 DNS Resolution
+
+The fbd DNS server resolves subdomain queries by searching the name hierarchy.
+For "example.fistbump":
+
+  1. Look up "example.fistbump". If found, serve its resource records.
+  2. If not found, look up "fistbump". If it has a SUB record matching
+     "example", serve the nested records from that SUB record.
+  3. If "fistbump" has NS records, serve as referral.
+  4. If no name in the hierarchy is found, return NXDOMAIN.
+
+DANE queries (e.g., "_443._tcp.example.fistbump") strip the DANE prefix,
+resolve the base name, and filter TLSA records by port and protocol.
+
+4.8.6 Inline Subdomains vs. Subdomain Auctions
+
+Name owners have two mutually exclusive approaches to subdomains:
+
+  SUB records. The owner defines subdomains inline in their resource data. Each
+  SUB record contains a single label and nested records. The owner retains full
+  control.
+
+  auctionSubdomains. The owner opens their name to third-party subdomain
+  auctions. Subdomains become independent on-chain names.
+
+These cannot coexist on the same name. SUB records would allow the owner to
+shadow subdomains purchased through auctions, so both SUB records and delegation
+records (DS, NS, GLUE4, GLUE6, SYNTH4, SYNTH6) are forbidden when
+auctionSubdomains is enabled. Conversely, enabling auctionSubdomains is rejected
+if existing data contains SUB or delegation records.
+
+Non-delegation records (A, AAAA, TXT, CNAME, MX, TLSA, CAA) are unaffected. A
+name with subdomains enabled can still host its own website, email, and TLS
+certificates.
+
+
+5. Covenants
+
+Every transaction output carries a covenant: a typed data structure encoding the
+output's role in the naming protocol.
+
+  Type        Value   Purpose
+  NONE          0     Standard value transfer
+  OPEN          1     Initiate a name auction
+  BID           2     Place a blind bid
+  REVEAL        3     Reveal a bid
+  REDEEM        4     Reclaim a losing bid
+  REGISTER      5     Register a won name
+  UPDATE        6     Update DNS records
+  RENEW         7     Renew ownership
+  TRANSFER      8     Initiate transfer
+  FINALIZE      9     Complete a transfer
+  REVOKE       10     Burn a name
+
+Covenants from REVEAL through REVOKE must reference the previous covenant output
+in the name's UTXO chain, ensuring sequential state transitions.
+
+Spending rules:
+
+  Dustworthy (zero-value allowed):   NONE, BID
+  Freely spendable:                  NONE, OPEN, REDEEM
+  Locked (next valid covenant only): BID, REVEAL, REGISTER, UPDATE,
+                                     RENEW, TRANSFER, FINALIZE
+  Unspendable (burned):              REVOKE
+
+
+6. Currency: FBC
+
+The native currency is FBC (Fistbump Coin). The smallest unit is one bump.
+
+  1 FBC = 1,000,000 bumps
+
+  Initial block reward:   500 FBC
+  Halving interval:       1,051,200 blocks (~4 years at 2-min blocks)
+  Maximum halvings:       52
+  Total supply:           1,051,200,000 FBC
+
+The genesis block reward is burned. Coinbase outputs require 100 confirmations
+before spending.
+
+  Epoch    Blocks                  Reward     Cumulative Supply
+  1        0 - 1,051,199           500 FBC    525,600,000 FBC
+  2        1,051,200 - 2,102,399   250 FBC    788,400,000 FBC
+  3        2,102,400 - 3,153,599   125 FBC    919,800,000 FBC
+  ...      ...                     ...        ...
+  52       ...                     ~0 FBC     1,051,200,000 FBC
+
+
+7. Transactions
+
+Fistbump uses an all-witness transaction format with no legacy types.
+
+  version       4 bytes     Protocol version
+  inputs        variable    Previous outpoints and sequence numbers
+  outputs       variable    Value, address, and covenant per output
+  locktime      4 bytes     Block height or timestamp lock
+  witnesses     variable    One witness stack per input
+
+Hashing:
+
+  txHash = BLAKE2b-256(base serialization, excluding witnesses)
+  wtxid  = BLAKE2b-256(txHash || BLAKE2b-256(witness data))
+
+The block header commits to both a Merkle root of txHash values and a separate
+witness Merkle root of wtxid values.
+
+Maximum transaction size: 1,000,000 bytes. Maximum block weight: 4,000,000.
+
+
+8. Addresses
+
+All addresses use Bech32 encoding with a network-specific human-readable part:
+
+  Network     HRP     Example prefix
+  mainnet     fb      fb1q...
+  testnet     ft      ft1q...
+  regtest     fr      fr1q...
+  simnet      fs      fs1q...
+
+Witness programs:
+
+  Version 0, 20-byte hash (P2WPKH):
+    hash = BLAKE2b-160(compressed public key)
+    Verification: standard pay-to-pubkey-hash check
+
+  Version 0, 32-byte hash (P2WSH):
+    hash = SHA3-256(witness script)
+    Verification: execute the witness script
+
+  Versions 1-31:
+    Reserved for future soft fork upgrades. Currently anyone-can-spend.
+
+
+9. State Storage: Urkel Tree
+
+Name state is stored in an Urkel tree, a base-2 Merkleized radix trie. Keys are
+32-byte SHA3-256 hashes of names. Values are serialized NameState records:
+
+  name          Raw name bytes (1-63)
+  nameHash      SHA3-256 hash
+  height        Auction start height
+  renewal       Last renewal height
+  owner         Current UTXO (transaction hash + output index)
+  value         Registration price in bumps (second-highest bid or minimum bid)
+  highest       Highest bid seen
+  data          DNS resource record data
+  transfer      Transfer initiation height
+  revoked       Revocation height (0 if active)
+  renewals      Total renewal count
+  registered    Whether the name has been registered
+  expired       Whether the name has expired
+  flags         UInt8 bit flags (bit 0 = auctionSubdomains)
+  parentHash    SHA3-256 hash of direct parent (empty for TLDs)
+
+The trie root is committed in the block header. The tree updates every 30 blocks
+(the tree interval), enabling light client verification without full chain
+download.
+
+
+10. Networking
+
+10.1 P2P Protocol
+
+Nodes communicate over TCP using a binary message protocol. Default ports:
+
+  Network     P2P      Brontide   RPC      DNS
+  mainnet     32867    32868      32869    32870
+  testnet     42867    42868      42869    42870
+  regtest     52867    52868      52869    52870
+  simnet      62867    62868      62869    62870
+
+10.2 Brontide Encryption
+
+Peer connections support Brontide, an encrypted transport based on the Noise
+protocol framework:
+
+  Noise_XK_secp256k1_ChaChaPoly_SHA256+SVDW_Squared
+
+Provides mutual authentication, forward secrecy, and encrypted traffic with key
+rotation every 1,000 messages.
+
+10.3 Parameters
+
+  Magic bytes (mainnet):  0xFBD0FBD0
+  Protocol version:       3
+  Max outbound peers:     8
+  Max inbound peers:      20
+  Max message payload:    8 MB
+  Ban threshold:          100 points
+  Ban duration:           24 hours
+  DNS seed:               seed.fbd.dev
+
+
+11. Cryptographic Primitives
+
+  BLAKE2b-256         Block hashing, transaction hashing, PoW password,
+                      blind bids
+  BLAKE2b-160         Public key hashing (P2WPKH addresses)
+  SHA3-256            Name hashing, witness script hashing (P2WSH)
+  secp256k1           Elliptic curve for signatures (ECDSA) and key
+                      agreement (ECDH)
+  ChaCha20-Poly1305   Brontide peer-to-peer encryption
+  BalloonHash         Proof-of-work (BLAKE2b-256 inner hash, 512 MB
+                      scratchpad)
+
+
+12. Comparison with Handshake
+
+Fistbump shares Handshake's covenant-based naming model, Urkel tree, and UTXO
+structure. Key differences:
+
+  Property                  Fistbump                      Handshake
+  -------------------------------------------------------------------------------
+  PoW algorithm             Balloon Hash (512 MB)         BLAKE2b+SHA3
+  Hardware specialization   Memory-hard (reduced edge)    Compute-bound (ASIC-dominated)
+  Block time                120 seconds                   600 seconds
+  Difficulty window         72 blocks                     144 blocks
+  Total supply              ~1.051 billion FBC            ~2.04 billion HNS
+  Initial block reward      500 FBC                       2,000 HNS
+  Halving interval          1,051,200 blocks              170,000 blocks
+  Coinbase maturity         100 blocks                    100 blocks
+  Premium name gate         DNSSEC required (<=6 bytes)   Alexa top 100k only
+  Minimum bid               100x reward (premium TLD)     0 (free if uncontested)
+                            20x reward (regular TLD)
+                            0.2x reward (subdomain)
+  Registration fee split    50% burned, 50% dev fund      100% burned
+  Renewal fee               1% of price (min = min bid)   0 (free renewals)
+  Development fund          Registration + renewals       Airdrop (2.9% claimed)
+  Tree update interval      30 blocks                     36 blocks
+  Address prefix            fb (mainnet)                  hs (mainnet)
+  On-chain subdomains       Yes (with ancestor payments)  No
+  Node implementation       Swift                         JavaScript / C++
+
+
+13. Economics
+
+Transactions compete for block space through fees measured in bumps per byte of
+transaction weight. Miners select transactions by fee rate to maximize revenue.
+
+
+14. Security Considerations
+
+14.1 51% Attacks
+
+A miner controlling majority hash rate could reorganize the chain. Memory-hard
+PoW raises the capital cost by requiring large amounts of RAM rather than
+specialized chips. An attacker must acquire and operate many general-purpose
+computers, which is expected to be more expensive per unit of effective hashpower
+than an attack on an ASIC-dominated, compute-bound chain.
+
+14.2 Name Squatting
+
+Multiple mechanisms mitigate squatting: the 60-day rollout prevents a land rush
+at genesis; DNSSEC requirements protect short names; minimum bids prevent
+costless acquisition; and renewal fees create ongoing holding costs. Names not
+renewed within 262,800 blocks (~1 year) expire and reopen for auction.
+
+14.3 Subdomain Sovereignty
+
+The auctionSubdomains flag is permanent once set. Both the flag and parentHash
+are preserved through name expiration, so subdomains function even if the parent
+expires. Delegation and SUB records are blocked when subdomain auctions are
+enabled, preventing resolution redirection or shadowing.
+
+
+15. Implementation
+
+The reference implementation is fbd, a full node written in Swift:
+
+  fbd       Full node with P2P networking, chain validation, mempool,
+            CPU miner, DNS server, and JSON-RPC API
+  fbdctl    Command-line RPC client
+
+Supports four networks (mainnet, testnet, regtest, simnet) on macOS, Linux, and
+Windows. Over 60 JSON-RPC methods for blockchain queries, wallet management,
+name auctions, mining, and network administration.
+
+Source code: https://github.com/fistbump-org/fbd
+
+
+16. Conclusion
+
+Fistbump provides a complete naming hierarchy, from root to subdomain, on a
+blockchain secured by provably memory-hard proof of work. On-chain DNS records
+and a built-in authoritative server make names immediately resolvable through
+standard DNS query interfaces. Market-driven auctions, minimum bids, and
+renewal fees create sustainable economics without insider allocation. The result
+is a naming system designed to resist centralized control, secured by a mining
+design intended to raise the cost of hardware concentration.
+
+
+References
+
+[1]  Boneh, D., Corrigan-Gibbs, H., Schechter, S. "Balloon Hashing: A
+     Memory-Hard Function Providing Provable Protection Against Sequential
+     Attacks." ASIACRYPT 2016.
+
+[2]  Alwen, J., Serbinenko, V. "High Parallel Complexity Graphs and
+     Memory-Hard Functions." STOC 2015.
+
+[3]  Kalodner, H., Carlsten, M., Ellenbogen, P., Bonneau, J., Narayanan, A.
+     "An Empirical Study of Namecoin and Lessons for Decentralized Namespace
+     Design." WEIS 2015.
+
+[4]  US Department of Justice. "Department of Justice Seizes 2,779 Internet
+     Domain Names Engaged in Selling Counterfeit Goods." Press release,
+     November 2020.
+
+[5]  Hilton, S. "Dyn Analysis Summary Of Friday October 21 Attack." Dyn Blog,
+     October 2016.
+
+[6]  Fox-IT. "Black Tulip: Report of the Investigation into the DigiNotar
+     Certificate Authority Breach." 2012.
+
+[7]  O'Brien, D., Sleevi, R., Whalley, A. "Chrome's Plan to Distrust Symantec
+     Certificates." Google Security Blog, September 2017.
+
+[8]  Unstoppable Domains. US Patent Application 17/465,707, "Resolving
+     Blockchain Domains." Filed 2021.
