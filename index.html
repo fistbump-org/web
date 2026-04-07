@@ -546,6 +546,24 @@ document.querySelectorAll('.mobile-nav a').forEach(a => {
   if (/iPhone|iPad|iPod/i.test(ua) && btn) btn.classList.add('disabled');
 
 })();
+
+/* Cachebust all download links. Appending a timestamp query param on
+   page load forces browsers to re-fetch from the server instead of
+   serving a stale cached copy from a previous visit. Apache ignores
+   the query string when resolving the symlinked filename. */
+(function() {
+  var t = Date.now();
+  document.querySelectorAll('a[href*="download/"]').forEach(function(a) {
+    var sep = a.href.indexOf('?') === -1 ? '?' : '&';
+    a.href = a.href + sep + 't=' + t;
+  });
+  /* Also rewrite the auto-detect button if it was set above */
+  var btn = document.getElementById('walletDownloadBtn');
+  if (btn && btn.href && btn.href.indexOf('download/') !== -1 && btn.href.indexOf('t=') === -1) {
+    var s = btn.href.indexOf('?') === -1 ? '?' : '&';
+    btn.href = btn.href + s + 't=' + t;
+  }
+})();
 </script>
 
 </body>
