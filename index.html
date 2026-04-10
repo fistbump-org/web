@@ -346,6 +346,7 @@ example.		<span class="t-accent">21600</span>	IN	A	<span class="t-accent">1.2.3.
       <div class="sw-dl-row">
         <div class="sw-dl-label"><img class="sw-dl-icon" src="img/apple.svg" alt="">iOS</div>
         <div class="sw-dl-files">
+          <a href="download/Fistbump-latest-ios.ipa" class="sw-dl-link">IPA</a>
           <span class="sw-dl-link disabled">App Store coming soon</span>
         </div>
       </div>
@@ -538,12 +539,11 @@ document.querySelectorAll('.mobile-nav a').forEach(a => {
   } else if (/Android/i.test(ua)) {
     name = 'Android'; href = 'download/Fistbump-latest-android.apk';
   } else if (/iPhone|iPad|iPod/i.test(ua)) {
-    name = 'iOS'; href = '#';
+    name = 'iOS'; href = 'download/Fistbump-latest-ios.ipa';
   }
 
   if (name && btn) btn.textContent = 'Download for ' + name;
   if (href && btn) btn.href = href;
-  if (/iPhone|iPad|iPod/i.test(ua) && btn) btn.classList.add('disabled');
 
 })();
 
