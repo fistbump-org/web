@@ -350,13 +350,39 @@ example.		<span class="t-accent">21600</span>	IN	A	<span class="t-accent">1.2.3.
         <div class="sw-dl-files">
           <a href="download/Fistbump-latest-ios.ipa" class="sw-dl-link">IPA</a>
           <span class="sw-dl-link disabled">App Store coming soon</span>
+          <span class="sw-dl-variants">+ iPadOS &middot; visionOS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sw-extension reveal">
+      <h3>Browser extension</h3>
+      <p>Adds a <code>window.fistbump</code> API to web pages so they can request signatures and send transactions through your desktop wallet. Talks to the wallet over native messaging — no HTTP, no open ports.</p>
+      <div class="sw-dl-table" style="margin-top:20px">
+        <div class="sw-dl-row">
+          <div class="sw-dl-label"><img class="sw-dl-icon" src="img/chromium.svg" alt="">Chromium</div>
+          <div class="sw-dl-files">
+            <span class="sw-dl-link disabled">Chrome Web Store coming soon</span>
+            <span class="sw-dl-browsers">
+              <img src="img/chrome.svg" alt="" title="Chrome">
+              <img src="img/edge.svg" alt="" title="Edge">
+              <img src="img/brave.svg" alt="" title="Brave">
+              <img src="img/opera.svg" alt="" title="Opera">
+            </span>
+          </div>
+        </div>
+        <div class="sw-dl-row">
+          <div class="sw-dl-label"><img class="sw-dl-icon" src="img/firefox.svg" alt="">Firefox</div>
+          <div class="sw-dl-files">
+            <a href="https://addons.mozilla.org/addon/fistbump/" class="sw-dl-link">Mozilla Add-ons</a>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="sw-node reveal">
       <h3>fbd <span class="sw-dev-tag">Full node</span></h3>
-      <p>Blockchain validation, P2P networking, wallet, mining, and authoritative DNS server. Includes <code>fbdctl</code> command-line RPC client. Build from source or use the install script.</p>
+      <p>Fistbump full node written in Swift. Validates the chain, participates in P2P, serves authoritative DNS from chain state, and includes a wallet and miner. Controlled via the <code>fbdctl</code> CLI over RPC.</p>
       <div class="fb-terminal terminal-sm">
         <div class="fb-terminal-bar">
           <span class="fb-terminal-dot"></span>
