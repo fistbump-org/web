@@ -135,8 +135,8 @@
   margin-bottom: 18px;
 }
 .doc-article p strong { color: var(--fb-text); font-weight: 600; }
-.doc-article a { color: var(--fb-accent); }
-.doc-article a:hover { text-decoration: underline; }
+.doc-article a:not(.btn):not(.next-card) { color: var(--fb-accent); }
+.doc-article a:not(.btn):not(.next-card):hover { text-decoration: underline; }
 
 .doc-article ul, .doc-article ol {
   margin: 0 0 20px 22px;
