@@ -2,9 +2,34 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Fistbump</title>
-<meta name="description" content="Fistbump is a decentralized, permissionless naming protocol designed as a production-ready replacement for the DNS root zone.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#09090b">
+
+<title>Fistbump — Decentralized Naming Protocol & DNS Root Zone Replacement</title>
+<meta name="description" content="Fistbump is a permissionless, memory-hard blockchain that replaces the DNS root zone. On-chain Vickrey auctions, built-in nameserver, no pre-mine. Mainnet is live.">
+<meta name="keywords" content="decentralized DNS, blockchain naming, DNS root zone, memory-hard proof of work, Balloon Hashing, Vickrey auction, on-chain DNS, Handshake alternative, ENS alternative, Fistbump, FBC">
+<meta name="author" content="Fistbump">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="canonical" href="https://fistbump.org/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Fistbump">
+<meta property="og:title" content="Fistbump — Decentralized Naming Protocol">
+<meta property="og:description" content="A permissionless, memory-hard blockchain replacing the DNS root zone. On-chain auctions, on-chain DNS, no pre-mine. Mainnet is live.">
+<meta property="og:url" content="https://fistbump.org/">
+<meta property="og:image" content="https://fistbump.org/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Fistbump — A memory-hard decentralized naming protocol">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fistbump — Decentralized Naming Protocol">
+<meta name="twitter:description" content="Replace the DNS root zone. On-chain Vickrey auctions, on-chain DNS, no pre-mine. Mainnet is live.">
+<meta name="twitter:image" content="https://fistbump.org/img/og-image.png">
+<meta name="twitter:image:alt" content="Fistbump — A memory-hard decentralized naming protocol">
+
 <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="shortcut icon" href="/favicon.ico" />
@@ -15,6 +40,87 @@
 <link rel="preload" href="/fonts/ibm-plex-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fistbump.css">
 <link rel="stylesheet" href="style.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://fistbump.org/#organization",
+      "name": "Fistbump",
+      "alternateName": "Fistbump Protocol",
+      "url": "https://fistbump.org/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://fistbump.org/web-app-manifest-512x512.png",
+        "width": 512,
+        "height": 512
+      },
+      "description": "A permissionless, memory-hard decentralized naming protocol that replaces the DNS root zone with a public blockchain.",
+      "sameAs": [
+        "https://github.com/fistbump-org",
+        "https://discord.com/invite/JgejsFYFGJ"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://fistbump.org/#website",
+      "url": "https://fistbump.org/",
+      "name": "Fistbump",
+      "description": "Decentralized naming protocol and DNS root zone replacement.",
+      "publisher": { "@id": "https://fistbump.org/#organization" },
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://fistbump.org/#webpage",
+      "url": "https://fistbump.org/",
+      "name": "Fistbump — Decentralized Naming Protocol & DNS Root Zone Replacement",
+      "isPartOf": { "@id": "https://fistbump.org/#website" },
+      "about": { "@id": "https://fistbump.org/#organization" },
+      "description": "Fistbump is a permissionless, memory-hard blockchain that replaces the DNS root zone. On-chain Vickrey auctions, built-in nameserver, no pre-mine. Mainnet is live.",
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://fistbump.org/img/og-image.png"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Fistbump Wallet",
+      "operatingSystem": "macOS, Windows, Linux, Android, iOS",
+      "applicationCategory": "FinanceApplication",
+      "description": "Desktop and mobile wallet for Fistbump: manage FBC, register names, bid on auctions, and configure on-chain DNS records. Includes a built-in full node.",
+      "url": "https://fistbump.org/#software",
+      "downloadUrl": "https://fistbump.org/#software",
+      "softwareVersion": "latest",
+      "author": { "@id": "https://fistbump.org/#organization" },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "fbd",
+      "alternateName": "Fistbump Daemon",
+      "operatingSystem": "macOS, Linux, Windows",
+      "applicationCategory": "DeveloperApplication",
+      "description": "Reference Fistbump full node written in Swift. Validates the chain, participates in P2P, serves authoritative DNS from chain state, and includes a wallet and miner.",
+      "url": "https://fbd.dev",
+      "downloadUrl": "https://fbd.dev",
+      "author": { "@id": "https://fistbump.org/#organization" },
+      "programmingLanguage": "Swift",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -62,7 +168,7 @@
     <h1 class="hero-title">Replace the<br>DNS root zone</h1>
     <p class="hero-sub">On-chain Vickrey auctions. On-chain DNS records. Every full node is an authoritative nameserver. No pre-mine. No registrars. No certificate authorities. <strong>Mainnet is live.</strong></p>
     <div class="hero-actions">
-      <a href="https://fistbump.org/fistbump.txt" class="btn btn-primary">Read the Whitepaper</a>
+      <a href="/whitepaper/" class="btn btn-primary">Read the Whitepaper</a>
       <a href="https://swap.fistbump.org" class="btn btn-outline">Swap BTC &harr; FBC</a>
       <a href="https://github.com/fistbump-org/fbd" class="btn btn-outline">View Source</a>
     </div>
@@ -288,7 +394,13 @@ example.		<span class="t-accent">21600</span>	IN	A	<span class="t-accent">1.2.3.
 
     <div class="sw-wallet reveal">
       <div class="sw-wallet-screenshot">
-        <img src="img/wallet.png" alt="Fistbump wallet screenshot">
+        <picture>
+          <source srcset="img/wallet.webp" type="image/webp">
+          <img src="img/wallet.png"
+               alt="Fistbump desktop wallet showing FBC balance, active name auctions, and on-chain DNS records"
+               width="2092" height="1492"
+               loading="lazy" decoding="async">
+        </picture>
       </div>
       <div class="sw-wallet-info">
         <h3>Wallet</h3>
@@ -450,56 +562,6 @@ example.		<span class="t-accent">21600</span>	IN	A	<span class="t-accent">1.2.3.
   </div>
 </section>
 
-<!-- ▬▬ Resources ▬▬ -->
-<section class="resources reveal">
-  <div class="container">
-    <div class="resources-grid">
-      <a href="https://fistbump.org/fistbump.txt" class="resource-card resource-featured">
-        <div>
-          <h3>Whitepaper</h3>
-          <p>Protocol vision, technical architecture, competitive positioning, and economic design.</p>
-        </div>
-        <span class="resource-arrow">&rarr;</span>
-      </a>
-      <a href="https://fbd.dev" class="resource-card">
-        <div>
-          <h3>Documentation</h3>
-          <p>Node configuration, RPC reference, and wallet commands.</p>
-        </div>
-        <span class="resource-arrow">&rarr;</span>
-      </a>
-      <a href="https://explorer.fistbump.org" class="resource-card">
-        <div>
-          <h3>Block Explorer</h3>
-          <p>Browse blocks, transactions, names, and auctions.</p>
-        </div>
-        <span class="resource-arrow">&rarr;</span>
-      </a>
-      <a href="https://swap.fistbump.org" class="resource-card">
-        <div>
-          <h3>Atomic Swap</h3>
-          <p>Trade BTC and FBC peer to peer. Non-custodial, no fees, no sign-up.</p>
-        </div>
-        <span class="resource-arrow">&rarr;</span>
-      </a>
-      <a href="https://github.com/fistbump-org" class="resource-card">
-        <div>
-          <h3>Source Code</h3>
-          <p>All repositories: fbd, wallet, explorer, and documentation.</p>
-        </div>
-        <span class="resource-arrow">&rarr;</span>
-      </a>
-      <a href="https://discord.com/invite/JgejsFYFGJ" class="resource-card">
-        <div>
-          <h3>Discord</h3>
-          <p>Join the community to discuss development, mining, and name auctions.</p>
-        </div>
-        <span class="resource-arrow">&rarr;</span>
-      </a>
-    </div>
-  </div>
-</section>
-
 </main>
 
 <footer class="footer">
@@ -519,22 +581,25 @@ example.		<span class="t-accent">21600</span>	IN	A	<span class="t-accent">1.2.3.
       </div>
       <div class="footer-col">
         <h4>Protocol</h4>
-        <a href="https://fistbump.org/fistbump.txt">Whitepaper</a>
+        <a href="/whitepaper/">Whitepaper</a>
         <a href="https://fbd.dev">Documentation</a>
         <a href="https://explorer.fistbump.org">Block Explorer</a>
         <a href="https://swap.fistbump.org">Atomic Swap</a>
       </div>
       <div class="footer-col">
-        <h4>Software</h4>
-        <a href="#software">Wallet</a>
-        <a href="https://github.com/fistbump-org/fbd">fbd</a>
-        <a href="https://fbd.dev#rpc">RPC Reference</a>
-        <a href="https://fbd.dev#install">Build from source</a>
+        <h4>Learn</h4>
+        <a href="/faq/">FAQ</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/vs-handshake/">vs. Handshake</a>
+        <a href="/vs-ens/">vs. ENS</a>
+        <a href="/vs-dns/">vs. DNS</a>
       </div>
       <div class="footer-col">
         <h4>Community</h4>
-        <a href="https://discord.com/invite/JgejsFYFGJ">Discord</a>
+        <a href="#software">Wallet</a>
+        <a href="/releases/">Downloads</a>
         <a href="https://github.com/fistbump-org">GitHub</a>
+        <a href="https://discord.com/invite/JgejsFYFGJ">Discord</a>
       </div>
     </div>
   </div>

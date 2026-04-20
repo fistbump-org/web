@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#09090b">
+
+<title>Fistbump FAQ — Frequently Asked Questions About Decentralized Naming</title>
+<meta name="description" content="Common questions about Fistbump: how it replaces DNS, how Vickrey auctions work, mining, name ownership, and how it compares to Handshake and ENS.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="canonical" href="https://fistbump.org/faq/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Fistbump">
+<meta property="og:title" content="Fistbump FAQ — Frequently Asked Questions">
+<meta property="og:description" content="Answers to common questions about Fistbump: decentralized naming, mining, auctions, DNS records, and comparisons.">
+<meta property="og:url" content="https://fistbump.org/faq/">
+<meta property="og:image" content="https://fistbump.org/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fistbump FAQ">
+<meta name="twitter:description" content="Answers to common questions about Fistbump: decentralized naming, mining, auctions, DNS records.">
+<meta name="twitter:image" content="https://fistbump.org/img/og-image.png">
+
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Fistbump" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fistbump.css">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/docs.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "url": "https://fistbump.org/faq/",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Fistbump?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Fistbump is a permissionless, memory-hard blockchain designed as a production replacement for the DNS root zone. Every full node is an authoritative nameserver, names are registered through on-chain Vickrey auctions, and DNS records (A, AAAA, NS, MX, CNAME, TXT, TLSA, CAA) are stored directly on the blockchain. There is no pre-mine, no ICO, and no registrar."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is Fistbump different from traditional DNS?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Traditional DNS is a hierarchy controlled by IANA (a function of ICANN) through accredited registrars and certificate authorities. Any of those parties can seize a domain, suspend an account, or mis-issue a certificate. Fistbump replaces that hierarchy with a public blockchain: names are owned by whoever controls the private key, DNS records are served by any full node, and there is no party with unilateral revocation power."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does Fistbump compare to Handshake (HNS)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Fistbump shares Handshake's covenant-based naming model and Urkel tree structure, but differs in several ways: memory-hard Balloon Hashing PoW (vs. ASIC-dominated BLAKE2b+SHA3), 2-minute block time (vs. 10-minute), renewal fees priced at 1% of the registration cost to prevent costless squatting (vs. free renewals), DNSSEC-based premium-name gating, native on-chain subdomains with payment splitting to ancestor owners, and a reference node written in Swift. There was no airdrop in Fistbump."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does Fistbump compare to ENS?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ENS (Ethereum Name Service) is a naming layer on Ethereum that stores resolver records rather than DNS records. .eth names are not top-level domains, they require special resolver software, and every operation costs Ethereum gas. Fistbump is its own blockchain with native DNS record types, is a full root-zone replacement (any TLD is registerable subject to ICANN reservations), and DNS queries resolve through any full node."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a pre-mine, ICO, or founder allocation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. The genesis block reward is burned. There is no pre-mine, no ICO, no airdrop, and no founder reward. Every FBC in circulation was mined by someone running the same software available to everyone else. A portion of name registration and renewal fees is sent to a development fund multisig, which is a governance parameter and not consensus-critical."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is Balloon Hashing and why does Fistbump use it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Balloon Hashing is a provably memory-hard proof-of-work function (Boneh, Corrigan-Gibbs, Schechter, ASIACRYPT 2016). It requires 512 MB of RAM per proof attempt, and its memory-hardness cannot be traded for computation. This shifts the mining bottleneck from computation to memory bandwidth, making ASICs economically pointless and keeping mining accessible to commodity hardware. Fistbump is the only live naming protocol using a provably memory-hard PoW."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I mine FBC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run the fbd full node. It includes a built-in CPU miner. Each proof attempt allocates a 512 MB scratchpad, so you need a machine with at least 1 GB of free RAM. The initial block reward is 500 FBC per block, halving every 1,051,200 blocks (~4 years). Coinbase outputs require 100 confirmations before they become spendable."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do name auctions work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Names are allocated through Vickrey (sealed-bid, second-price) auctions enforced entirely by on-chain covenants. The lifecycle is: OPEN (start auction, ~1 hour), BID (submit blinded bid for 3 days), REVEAL (disclose true bid for 1 day), REGISTER (winner claims name and pays the second-highest bid). Truthful bidding is the dominant strategy because you pay the runner-up's bid, not your own."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What DNS record types does Fistbump support?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Fistbump stores standard DNS resource records on-chain: A, AAAA, NS, MX, CNAME, TXT, TLSA (DANE), CAA, DS, GLUE4, GLUE6, SYNTH4, SYNTH6, and SUB (inline subdomains). Every fbd full node runs a built-in authoritative DNS server that responds to standard DNS queries using on-chain records. Point a recursive resolver at any node and it answers."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I register a name that already exists in ICANN DNS?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "All ICANN top-level domains are reserved at genesis to avoid namespace collisions. Premium names (6 bytes or fewer) require a DNSSEC proof demonstrating ownership of the corresponding domain under a qualifying ICANN TLD (com, net, org, gov, io, app, dev, xyz). This protects brand and identity holders from squatters."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if I do not renew my name?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Names must be renewed within 262,800 blocks (approximately one year). The renewal fee is 1% of the registration price, paid to the development fund, floored at the minimum bid for that name's tier. If you do not renew, the name expires and reopens for auction. Subdomains of an expired TLD continue to exist with independent renewal lifecycles."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are on-chain subdomains supported?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. TLD owners can enable on-chain subdomains by setting the auctionSubdomains flag. Once set, the flag is permanent. Subdomains are registered through the same Vickrey auction mechanism with a minimum bid of 0.2x the block reward. Registration fees are split: 50% burned, 25% to ancestor owners, 25% to the development fund."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Fistbump work with my browser?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Fistbump serves standard DNS. To resolve Fistbump names in a browser, point your system DNS resolver (or a recursive resolver) at a Fistbump node's DNS port (default 32870 on mainnet). The Fistbump browser extension adds a window.fistbump API for DApps and talks to the desktop wallet via native messaging — no HTTP, no open ports."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Fistbump mainnet live?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Mainnet is live. You can download the wallet or fbd full node from fistbump.org, join the P2P network, mine FBC, and register names through the Vickrey auction process."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I trade FBC for BTC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Atomic Swap (swap.fistbump.org) lets you trade FBC and BTC peer-to-peer with no middleman. Both sides lock funds into hash time-locked contracts on their respective chains — either both claims succeed or both refunds succeed, with nothing possible in between."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fistbump.org/" },
+    { "@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://fistbump.org/faq/" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="/" class="logo">
+      <svg class="logo-icon" width="28" height="28" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+        <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+        <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+          <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+        </g>
+      </svg>
+      <span class="logo-text">Fistbump</span>
+    </a>
+    <nav class="nav">
+      <a href="/#protocol">Protocol</a>
+      <a href="/#software">Software</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/whitepaper/">Whitepaper</a>
+      <a href="https://fbd.dev">Docs</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobileNav">
+  <a href="/#protocol">Protocol</a>
+  <a href="/#software">Software</a>
+  <a href="/faq/">FAQ</a>
+  <a href="/whitepaper/">Whitepaper</a>
+  <a href="/glossary/">Glossary</a>
+  <a href="https://fbd.dev">Docs</a>
+</nav>
+
+<main class="doc-shell">
+  <div class="container">
+    <div class="doc-layout">
+
+      <aside class="toc" aria-label="Table of contents">
+        <div class="toc-label">On this page</div>
+        <ul>
+          <li><a href="#what-is-fistbump">What is Fistbump?</a></li>
+          <li><a href="#vs-dns">vs. traditional DNS</a></li>
+          <li><a href="#vs-handshake">vs. Handshake</a></li>
+          <li><a href="#vs-ens">vs. ENS</a></li>
+          <li><a href="#premine">Pre-mine / ICO</a></li>
+          <li><a href="#balloon-hashing">Balloon Hashing</a></li>
+          <li><a href="#mining">How to mine FBC</a></li>
+          <li><a href="#auctions">How auctions work</a></li>
+          <li><a href="#dns-records">DNS record types</a></li>
+          <li><a href="#icann">ICANN collision</a></li>
+          <li><a href="#renewal">Renewal & expiry</a></li>
+          <li><a href="#subdomains">On-chain subdomains</a></li>
+          <li><a href="#browsers">Browser support</a></li>
+          <li><a href="#mainnet">Mainnet status</a></li>
+          <li><a href="#trade">Trading FBC</a></li>
+        </ul>
+      </aside>
+
+      <article class="doc-article">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">›</span>
+          <span class="current">FAQ</span>
+        </nav>
+
+        <span class="doc-eyebrow">Frequently asked questions</span>
+        <h1>Fistbump FAQ</h1>
+        <p class="doc-lead">Answers to the most common questions about Fistbump — the decentralized naming protocol replacing the DNS root zone.</p>
+
+        <div class="faq-list">
+          <div class="faq-item">
+            <h3 id="what-is-fistbump">What is Fistbump?</h3>
+            <p>Fistbump is a permissionless, memory-hard blockchain designed as a production replacement for the DNS root zone. Every full node is an authoritative nameserver, names are registered through on-chain <a href="/glossary/#vickrey-auction">Vickrey auctions</a>, and DNS records (A, AAAA, NS, MX, CNAME, TXT, TLSA, CAA) are stored directly on the blockchain. There is no pre-mine, no ICO, and no registrar.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="vs-dns">How is Fistbump different from traditional DNS?</h3>
+            <p>Traditional DNS is a hierarchy controlled by IANA (a function of ICANN) through accredited registrars and certificate authorities. Any of those parties can seize a domain, suspend an account, or mis-issue a certificate. Fistbump replaces that hierarchy with a public blockchain: names are owned by whoever controls the private key, DNS records are served by any full node, and no party has unilateral revocation power.</p>
+            <p>See the full breakdown: <a href="/vs-dns/">Fistbump vs. traditional DNS</a>.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="vs-handshake">How does Fistbump compare to Handshake (HNS)?</h3>
+            <p>Fistbump shares Handshake's covenant-based naming model and Urkel tree structure, but differs in several fundamental ways: <strong>memory-hard Balloon Hashing PoW</strong> (vs. ASIC-dominated BLAKE2b+SHA3), <strong>2-minute block time</strong> (vs. 10-minute), <strong>1% renewal fees</strong> to prevent costless squatting (vs. free renewals), DNSSEC-based premium-name gating, native on-chain subdomains with payment splitting to ancestor owners, and a reference node written in Swift. No airdrop.</p>
+            <p>See the full breakdown: <a href="/vs-handshake/">Fistbump vs. Handshake</a>.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="vs-ens">How does Fistbump compare to ENS?</h3>
+            <p>ENS (Ethereum Name Service) is a naming layer on Ethereum that stores <em>resolver records</em> rather than DNS records. <code>.eth</code> names are not top-level domains, they require special resolver software, and every operation costs Ethereum gas. Fistbump is its own blockchain with native DNS record types, is a full root-zone replacement (any TLD is registerable subject to ICANN reservations), and DNS queries resolve through any full node.</p>
+            <p>See the full breakdown: <a href="/vs-ens/">Fistbump vs. ENS</a>.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="premine">Is there a pre-mine, ICO, or founder allocation?</h3>
+            <p>No. The <strong>genesis block reward is burned</strong>. There is no pre-mine, no ICO, no airdrop, and no founder reward. Every FBC in circulation was mined by someone running the same software available to everyone else.</p>
+            <p>A portion of name registration and renewal fees is sent to a development fund multisig, which is a governance parameter rather than a consensus-critical one.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="balloon-hashing">What is Balloon Hashing and why does Fistbump use it?</h3>
+            <p><a href="/glossary/#balloon-hashing">Balloon Hashing</a> is a provably memory-hard proof-of-work function (Boneh, Corrigan-Gibbs, Schechter, ASIACRYPT 2016). It requires 512 MB of RAM per proof attempt, and its memory-hardness cannot be traded for computation.</p>
+            <p>This shifts the mining bottleneck from computation to memory bandwidth, making ASICs economically pointless and keeping mining accessible to commodity hardware. Fistbump is the only live naming protocol using a provably memory-hard PoW.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="mining">How do I mine FBC?</h3>
+            <p>Run the <code>fbd</code> full node. It includes a built-in CPU miner. Each proof attempt allocates a 512 MB scratchpad, so you need a machine with at least 1 GB of free RAM.</p>
+            <p>The initial block reward is 500 FBC per block, halving every 1,051,200 blocks (~4 years). Coinbase outputs require 100 confirmations before they become spendable.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="auctions">How do name auctions work?</h3>
+            <p>Names are allocated through Vickrey (sealed-bid, second-price) auctions enforced entirely by on-chain covenants. The lifecycle:</p>
+            <ul>
+              <li><strong>OPEN</strong> — start the auction (~1 hour)</li>
+              <li><strong>BID</strong> — submit a blinded bid (3 days)</li>
+              <li><strong>REVEAL</strong> — disclose the true bid (1 day)</li>
+              <li><strong>REGISTER</strong> — winner claims the name and pays the second-highest bid</li>
+            </ul>
+            <p>Truthful bidding is the dominant strategy because you pay the runner-up's bid, not your own.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="dns-records">What DNS record types does Fistbump support?</h3>
+            <p>Fistbump stores standard DNS resource records on-chain: <code>A</code>, <code>AAAA</code>, <code>NS</code>, <code>MX</code>, <code>CNAME</code>, <code>TXT</code>, <code>TLSA</code> (<a href="/glossary/#dane">DANE</a>), <code>CAA</code>, <code>DS</code>, <code>GLUE4</code>, <code>GLUE6</code>, <code>SYNTH4</code>, <code>SYNTH6</code>, and <code>SUB</code> (inline subdomains).</p>
+            <p>Every <code>fbd</code> full node runs a built-in authoritative DNS server. Point a recursive resolver at any node and it answers standard DNS queries.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="icann">Can I register a name that already exists in ICANN DNS?</h3>
+            <p>All ICANN top-level domains are reserved at genesis to avoid namespace collisions. Premium names (6 bytes or fewer) require a DNSSEC proof demonstrating ownership of the corresponding domain under a qualifying ICANN TLD: <code>com</code>, <code>net</code>, <code>org</code>, <code>gov</code>, <code>io</code>, <code>app</code>, <code>dev</code>, <code>xyz</code>. This protects brand and identity holders from squatters.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="renewal">What happens if I do not renew my name?</h3>
+            <p>Names must be renewed within 262,800 blocks (approximately one year). The renewal fee is 1% of the registration price, paid to the development fund, floored at the minimum bid for that name's tier.</p>
+            <p>If you do not renew, the name expires and reopens for auction. Subdomains of an expired TLD continue to exist with independent renewal lifecycles — the parent cannot orphan them.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="subdomains">Are on-chain subdomains supported?</h3>
+            <p>Yes. TLD owners enable on-chain subdomains by setting the <code>auctionSubdomains</code> flag. Once set, the flag is permanent.</p>
+            <p>Subdomains are registered through the same Vickrey auction with a minimum bid of 0.2× the block reward. Fees are split: 50% burned, 25% to ancestor owners, 25% to the development fund.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="browsers">Does Fistbump work with my browser?</h3>
+            <p>Fistbump serves <strong>standard DNS</strong>. To resolve Fistbump names in a browser, point your system DNS resolver (or a recursive resolver) at a Fistbump node's DNS port (default <code>32870</code> on mainnet).</p>
+            <p>The <a href="/#software">Fistbump browser extension</a> adds a <code>window.fistbump</code> API for dApps and talks to the desktop wallet via native messaging — no HTTP, no open ports.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="mainnet">Is Fistbump mainnet live?</h3>
+            <p><strong>Yes. Mainnet is live.</strong> Download the <a href="/#software">wallet or fbd full node</a>, join the P2P network, mine FBC, and register names through the Vickrey auction process.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3 id="trade">How do I trade FBC for BTC?</h3>
+            <p><a href="https://swap.fistbump.org">Atomic Swap</a> lets you trade FBC and BTC peer-to-peer with no middleman. Both sides lock funds into hash time-locked contracts on their respective chains — either both claims succeed or both refunds succeed, with nothing possible in between.</p>
+          </div>
+        </div>
+
+        <div class="next-steps">
+          <a class="next-card" href="/whitepaper/">
+            <div class="next-card-label">Read next</div>
+            <div class="next-card-title">Whitepaper</div>
+            <div class="next-card-desc">Full protocol specification and economic design.</div>
+          </a>
+          <a class="next-card" href="/glossary/">
+            <div class="next-card-label">Reference</div>
+            <div class="next-card-title">Glossary</div>
+            <div class="next-card-desc">Definitions of key terms used across the protocol.</div>
+          </a>
+        </div>
+
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo-row">
+          <svg width="24" height="24" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+            <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+            <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+              <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+            </g>
+          </svg>
+          <span>Fistbump</span>
+        </div>
+        <p class="footer-tagline">A memory-hard decentralized naming protocol.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Protocol</h4>
+        <a href="/whitepaper/">Whitepaper</a>
+        <a href="https://fbd.dev">Documentation</a>
+        <a href="https://explorer.fistbump.org">Block Explorer</a>
+        <a href="https://swap.fistbump.org">Atomic Swap</a>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <a href="/faq/">FAQ</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/vs-handshake/">vs. Handshake</a>
+        <a href="/vs-ens/">vs. ENS</a>
+        <a href="/vs-dns/">vs. DNS</a>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <a href="https://discord.com/invite/JgejsFYFGJ">Discord</a>
+        <a href="https://github.com/fistbump-org">GitHub</a>
+        <a href="/releases/">Downloads</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const toggle = document.getElementById('menuToggle');
+  const nav = document.getElementById('mobileNav');
+  toggle.addEventListener('click', () => {
+    nav.classList.toggle('open');
+    toggle.classList.toggle('open');
+    document.body.classList.toggle('nav-open');
+  });
+  document.querySelectorAll('.mobile-nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle.classList.remove('open');
+      document.body.classList.remove('nav-open');
+    });
+  });
+
+  /* Active TOC highlighting */
+  const links = document.querySelectorAll('.toc a');
+  const anchors = Array.from(links).map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+  const byId = new Map(Array.from(links).map(a => [a.getAttribute('href').slice(1), a]));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        byId.get(e.target.id)?.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-80px 0px -70% 0px' });
+  anchors.forEach(a => obs.observe(a));
+</script>
+
+</body>
+</html>

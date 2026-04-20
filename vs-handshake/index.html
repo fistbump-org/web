@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#09090b">
+
+<title>Fistbump vs. Handshake — Memory-Hard PoW, Renewal Fees, Subdomains</title>
+<meta name="description" content="Detailed comparison: Fistbump and Handshake share covenants and Urkel trees, but differ on PoW (Balloon Hashing vs. ASIC-dominated BLAKE2b+SHA3), renewal fees, block time, subdomain support, and governance.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="canonical" href="https://fistbump.org/vs-handshake/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Fistbump">
+<meta property="og:title" content="Fistbump vs. Handshake">
+<meta property="og:description" content="How Fistbump differs from Handshake: memory-hard PoW, renewal fees, on-chain subdomains, Swift implementation.">
+<meta property="og:url" content="https://fistbump.org/vs-handshake/">
+<meta property="og:image" content="https://fistbump.org/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fistbump vs. Handshake">
+<meta name="twitter:description" content="How Fistbump differs from Handshake: memory-hard PoW, renewal fees, on-chain subdomains.">
+<meta name="twitter:image" content="https://fistbump.org/img/og-image.png">
+
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Fistbump" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fistbump.css">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/docs.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://fistbump.org/vs-handshake/",
+  "headline": "Fistbump vs. Handshake — Memory-Hard PoW, Renewal Fees, Subdomains",
+  "description": "A detailed comparison of Fistbump and Handshake across proof-of-work, economics, auctions, subdomains, and governance.",
+  "url": "https://fistbump.org/vs-handshake/",
+  "image": "https://fistbump.org/img/og-image.png",
+  "inLanguage": "en-US",
+  "author": { "@type": "Organization", "name": "Fistbump", "url": "https://fistbump.org/" },
+  "publisher": { "@type": "Organization", "name": "Fistbump", "url": "https://fistbump.org/", "logo": { "@type": "ImageObject", "url": "https://fistbump.org/web-app-manifest-512x512.png" } },
+  "keywords": "Fistbump, Handshake, HNS, decentralized naming, Balloon Hashing, memory-hard PoW, Urkel tree, Vickrey auction, on-chain DNS",
+  "about": [
+    { "@type": "Thing", "name": "Fistbump", "url": "https://fistbump.org/" },
+    { "@type": "Thing", "name": "Handshake", "url": "https://handshake.org/" }
+  ],
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://fistbump.org/vs-handshake/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fistbump.org/" },
+    { "@type": "ListItem", "position": 2, "name": "vs. Handshake", "item": "https://fistbump.org/vs-handshake/" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="/" class="logo">
+      <svg class="logo-icon" width="28" height="28" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+        <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+        <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+          <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+        </g>
+      </svg>
+      <span class="logo-text">Fistbump</span>
+    </a>
+    <nav class="nav">
+      <a href="/#protocol">Protocol</a>
+      <a href="/#software">Software</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/whitepaper/">Whitepaper</a>
+      <a href="https://fbd.dev">Docs</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobileNav">
+  <a href="/#protocol">Protocol</a>
+  <a href="/#software">Software</a>
+  <a href="/faq/">FAQ</a>
+  <a href="/whitepaper/">Whitepaper</a>
+  <a href="/glossary/">Glossary</a>
+  <a href="https://fbd.dev">Docs</a>
+</nav>
+
+<main class="doc-shell">
+  <div class="container">
+    <div class="doc-layout">
+
+      <aside class="toc" aria-label="Table of contents">
+        <div class="toc-label">On this page</div>
+        <ul>
+          <li><a href="#shared">Shared heritage</a></li>
+          <li><a href="#summary">Summary table</a></li>
+          <li><a href="#pow">1. Proof of work</a></li>
+          <li><a href="#renewals">2. Renewal fees</a></li>
+          <li><a href="#premium">3. Premium name gating</a></li>
+          <li><a href="#subdomains">4. On-chain subdomains</a></li>
+          <li><a href="#economics">5. Economics</a></li>
+          <li><a href="#implementation">6. Implementation</a></li>
+          <li><a href="#who-for">Which should you use?</a></li>
+        </ul>
+      </aside>
+
+      <article class="doc-article">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">›</span>
+          <span class="current">vs. Handshake</span>
+        </nav>
+
+        <span class="doc-eyebrow">Protocol comparison</span>
+        <h1>Fistbump vs. Handshake</h1>
+        <p class="doc-lead">Fistbump and Handshake both aim to replace the DNS root zone with a blockchain-based naming system, and they share a common ancestry in covenants and Urkel trees. The differences are in the consensus, the economics, and the corners that have aged poorly.</p>
+
+        <h2 id="shared">Shared heritage</h2>
+        <p>Fistbump was designed after five years of Handshake operating in production, and it inherits several of Handshake's best architectural choices:</p>
+        <ul>
+          <li><strong>Covenants</strong> — typed transaction-output data structures that enforce the auction state machine at the consensus level, without a Turing-complete scripting runtime.</li>
+          <li><strong>Urkel tree</strong> — a Merkleized radix trie committed in every block header that allows light clients to verify name state with compact proofs.</li>
+          <li><strong>UTXO model</strong> — a Bitcoin-like accounting model that keeps transaction validation simple and parallelizable.</li>
+          <li><strong>On-chain DNS records</strong> — a name owner can attach standard DNS resource records directly to the chain, resolvable by any full node.</li>
+        </ul>
+        <p>What Fistbump changes are the pieces that made Handshake's real-world deployment fragile: an ASIC-dominated proof-of-work, free renewals that enabled costless squatting, and a lack of first-class on-chain subdomain support.</p>
+
+        <h2 id="summary">Summary table</h2>
+
+        <div class="compare-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th class="fb-col">Fistbump</th>
+                <th>Handshake</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>PoW algorithm</td>
+                <td class="fb-col"><span class="win">Balloon Hashing (512 MB, provably memory-hard)</span></td>
+                <td>BLAKE2b+SHA3 (compute-bound)</td>
+              </tr>
+              <tr>
+                <td>Hardware specialization</td>
+                <td class="fb-col"><span class="win">Memory-hard — reduced ASIC edge</span></td>
+                <td><span class="loss">ASIC-dominated (Bitmain HS3)</span></td>
+              </tr>
+              <tr>
+                <td>Block time</td>
+                <td class="fb-col">120 seconds</td>
+                <td>600 seconds</td>
+              </tr>
+              <tr>
+                <td>Difficulty window</td>
+                <td class="fb-col">72 blocks (per-block retarget)</td>
+                <td>144 blocks</td>
+              </tr>
+              <tr>
+                <td>Total supply</td>
+                <td class="fb-col">~1.051 B FBC</td>
+                <td>~2.04 B HNS</td>
+              </tr>
+              <tr>
+                <td>Initial block reward</td>
+                <td class="fb-col">500 FBC</td>
+                <td>2,000 HNS</td>
+              </tr>
+              <tr>
+                <td>Halving interval</td>
+                <td class="fb-col">1,051,200 blocks (~4 yr)</td>
+                <td>170,000 blocks (~3.2 yr)</td>
+              </tr>
+              <tr>
+                <td>Premium name gate</td>
+                <td class="fb-col">DNSSEC on com/net/org/gov/io/app/dev/xyz</td>
+                <td>Alexa top 100k only</td>
+              </tr>
+              <tr>
+                <td>Minimum bid (premium TLD)</td>
+                <td class="fb-col">100× block reward</td>
+                <td>0 (free if uncontested)</td>
+              </tr>
+              <tr>
+                <td>Registration fee split</td>
+                <td class="fb-col">50% burned, 50% dev fund</td>
+                <td>100% burned</td>
+              </tr>
+              <tr>
+                <td>Renewal fee</td>
+                <td class="fb-col"><span class="win">1% of registration price annually</span></td>
+                <td><span class="loss">0 (free renewals)</span></td>
+              </tr>
+              <tr>
+                <td>Development fund</td>
+                <td class="fb-col">Fees (no airdrop)</td>
+                <td>Airdrop (2.9% claimed)</td>
+              </tr>
+              <tr>
+                <td>On-chain subdomains</td>
+                <td class="fb-col"><span class="win">Yes, with ancestor payments</span></td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>Tree update interval</td>
+                <td class="fb-col">30 blocks</td>
+                <td>36 blocks</td>
+              </tr>
+              <tr>
+                <td>Address prefix</td>
+                <td class="fb-col">fb (mainnet)</td>
+                <td>hs (mainnet)</td>
+              </tr>
+              <tr>
+                <td>Reference node</td>
+                <td class="fb-col">Swift</td>
+                <td>JavaScript / C++</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="pow">1. Proof of work</h2>
+        <p>Handshake's PoW is a composition of BLAKE2b-512 and SHA3-256. It is compute-bound — memory plays no structural role — and within months of mainnet launch the network was dominated by the Bitmain Antminer HS3. This is the same pattern observed with Bitcoin (SHA-256), Litecoin (Scrypt), and every other compute-bound PoW: as soon as an efficient silicon implementation exists, CPU and GPU miners are priced out.</p>
+        <p>Fistbump uses <a href="/glossary/#balloon-hashing">Balloon Hashing</a>, a provably memory-hard function (Boneh, Corrigan-Gibbs, Schechter, ASIACRYPT 2016). Each proof attempt allocates a 512 MB scratchpad that must be filled sequentially and then mixed with pseudorandomly selected neighbors. The algorithm has a formal lower bound on memory use (Theorem 3 in the original paper) — there is no time-memory trade-off.</p>
+        <p>In practice this means:</p>
+        <ul>
+          <li>An ASIC for Balloon Hashing requires 512 MB of DRAM per core. DRAM is commodity, so an ASIC's per-core cost is comparable to a desktop with a DIMM.</li>
+          <li>GPUs, which parallelize through thousands of threads with small local memory (48–128 KB/SM), cannot fit a 512 MB scratchpad per thread. A 16 GB VRAM GPU runs at most ~32 parallel instances.</li>
+          <li>FPGAs have even less on-chip memory and must use external DRAM, erasing their advantage.</li>
+        </ul>
+        <p>This is the single largest architectural difference between the two protocols. For a naming chain — where hash-rate concentration is a direct threat to name ownership — broad mining participation is load-bearing.</p>
+
+        <h2 id="renewals">2. Renewal fees</h2>
+        <p>Handshake renewals are <strong>free</strong>. A speculator can register a name once and hold it indefinitely at zero ongoing cost. Combined with a large airdrop-driven initial coin distribution, this produced observable squatting on desirable names.</p>
+        <p>Fistbump charges <strong>1% of the registration price annually</strong>, floored at the minimum bid for that name's tier. The fee is paid to the development fund. Renewal is required every 262,800 blocks (~1 year); unrenewed names expire and reopen for auction.</p>
+        <p>The effect is that a squatter who wants to hold 1,000 names at 10,000 FBC each must budget 100,000 FBC/year in renewals, creating a carrying cost that must be offset by real demand. Names without demand expire.</p>
+
+        <h2 id="premium">3. Premium name gating</h2>
+        <p>Handshake reserved names based on the Alexa top-100k list at genesis. Alexa was discontinued by Amazon in 2022, so any future protocol cannot use that reference.</p>
+        <p>Fistbump gates <strong>all names of 6 bytes or fewer</strong> (premium names) behind a DNSSEC proof of ownership of the corresponding domain under a qualifying ICANN TLD: <code>com</code>, <code>net</code>, <code>org</code>, <code>gov</code>, <code>io</code>, <code>app</code>, <code>dev</code>, or <code>xyz</code>. Proofs are validated on-chain with a 3,600-second grace period for RRSIG validity.</p>
+        <p>This is broader than Handshake's Alexa approach: every short name requires demonstrated ownership regardless of whether a domain happened to rank on a discontinued list. Premium names are available at genesis with no rollout delay.</p>
+
+        <h2 id="subdomains">4. On-chain subdomains</h2>
+        <p>Handshake supports subdomains only as DNS delegation (NS records) from the TLD, which means the TLD owner's nameserver is the source of truth. Revoking a subdomain is a matter of updating the TLD's records.</p>
+        <p>Fistbump supports <strong>fully on-chain subdomains</strong>. A TLD owner enables them by setting the <code>auctionSubdomains</code> flag (permanent once set). Subdomains then use the same Vickrey auction mechanism with their own ownership, records, and renewal lifecycle. The parent cannot unilaterally revoke a subdomain.</p>
+        <p>Subdomain registration fees are split: 50% burned, 25% to ancestor owners (split evenly among all parents), and 25% to the development fund. This creates an economic incentive for TLD owners to enable subdomain auctions.</p>
+        <p>The <code>auctionSubdomains</code> flag and <code>parentHash</code> field are preserved through name expiration, so subdomains function even if the parent TLD expires.</p>
+
+        <h2 id="economics">5. Economics</h2>
+        <p>Handshake's development was funded through a 7.5% airdrop to open-source contributors (of which ~2.9% was claimed). This was a one-time allocation that ends as the claimed coins are spent.</p>
+        <p>Fistbump has <strong>no airdrop</strong>. The development fund is funded continuously from 50% of name registration fees and 100% of renewal fees. This ties development funding to protocol usage: if nobody registers or renews names, there is nothing to fund. The multisig threshold and signer set are governance parameters, not consensus rules, so they can evolve without a hard fork.</p>
+
+        <h2 id="implementation">6. Implementation</h2>
+        <p>Handshake's reference node, <code>hsd</code>, is written in JavaScript (Node.js) with performance-critical pieces in C++. This was pragmatic at launch in 2020 but has aged: memory behavior under load, packaging, and mobile embedding are all harder than with a typed, compiled language.</p>
+        <p>Fistbump's reference node, <code>fbd</code>, is written entirely in <strong>Swift</strong>. Swift is a modern systems language with a strong type system, deterministic memory semantics, and cross-platform toolchains for macOS, Linux, Windows, iOS, and Android. The same codebase powers the desktop and mobile wallets.</p>
+
+        <h2 id="who-for">Which should you use?</h2>
+        <p><strong>Use Handshake</strong> if you already hold HNS or a large HNS-denominated name portfolio and you are satisfied with the network's current hardware concentration.</p>
+        <p><strong>Use Fistbump</strong> if you want:</p>
+        <ul>
+          <li>Mining participation on commodity hardware, with no expectation of ASIC dominance.</li>
+          <li>Sustained anti-squatting pressure via renewal fees.</li>
+          <li>First-class on-chain subdomains with independent ownership.</li>
+          <li>A Swift-based node that embeds into modern mobile platforms.</li>
+          <li>An origination with no pre-mine, ICO, airdrop, or founder allocation.</li>
+        </ul>
+
+        <div class="callout accent">
+          <div class="callout-title">Try it</div>
+          <p><a href="/#software">Download the wallet</a>, mine a block, and register a name. Mainnet is live.</p>
+        </div>
+
+        <div class="next-steps">
+          <a class="next-card" href="/vs-ens/">
+            <div class="next-card-label">Compare</div>
+            <div class="next-card-title">vs. ENS</div>
+            <div class="next-card-desc">How Fistbump differs from the Ethereum Name Service.</div>
+          </a>
+          <a class="next-card" href="/whitepaper/">
+            <div class="next-card-label">Dig deeper</div>
+            <div class="next-card-title">Whitepaper</div>
+            <div class="next-card-desc">Full protocol specification and economic design.</div>
+          </a>
+        </div>
+
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo-row">
+          <svg width="24" height="24" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+            <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+            <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+              <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+            </g>
+          </svg>
+          <span>Fistbump</span>
+        </div>
+        <p class="footer-tagline">A memory-hard decentralized naming protocol.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Protocol</h4>
+        <a href="/whitepaper/">Whitepaper</a>
+        <a href="https://fbd.dev">Documentation</a>
+        <a href="https://explorer.fistbump.org">Block Explorer</a>
+        <a href="https://swap.fistbump.org">Atomic Swap</a>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <a href="/faq/">FAQ</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/vs-handshake/">vs. Handshake</a>
+        <a href="/vs-ens/">vs. ENS</a>
+        <a href="/vs-dns/">vs. DNS</a>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <a href="https://discord.com/invite/JgejsFYFGJ">Discord</a>
+        <a href="https://github.com/fistbump-org">GitHub</a>
+        <a href="/releases/">Downloads</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const toggle = document.getElementById('menuToggle');
+  const nav = document.getElementById('mobileNav');
+  toggle.addEventListener('click', () => {
+    nav.classList.toggle('open');
+    toggle.classList.toggle('open');
+    document.body.classList.toggle('nav-open');
+  });
+  document.querySelectorAll('.mobile-nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle.classList.remove('open');
+      document.body.classList.remove('nav-open');
+    });
+  });
+
+  const links = document.querySelectorAll('.toc a');
+  const anchors = Array.from(links).map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+  const byId = new Map(Array.from(links).map(a => [a.getAttribute('href').slice(1), a]));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        byId.get(e.target.id)?.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-80px 0px -70% 0px' });
+  anchors.forEach(a => obs.observe(a));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#09090b"/>
+      <stop offset="1" stop-color="#0f1419"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.3" r="0.6">
+      <stop offset="0" stop-color="#57c7ed" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#57c7ed" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fafafa"/>
+      <stop offset="0.55" stop-color="#fafafa"/>
+      <stop offset="0.85" stop-color="#57c7ed"/>
+      <stop offset="1" stop-color="#3ab4de"/>
+    </linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#57c7ed" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <g transform="translate(80, 160)">
+    <rect x="0" y="0" width="96" height="96" rx="22" fill="#fafafa"/>
+    <g transform="translate(0, 0) scale(0.0845)">
+      <g transform="matrix(1.69935,0,0,1.69935,-237.675,-237.675)">
+        <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="#09090b" fill-rule="nonzero"/>
+      </g>
+    </g>
+  </g>
+
+  <text x="80" y="140" font-family="IBM Plex Sans, -apple-system, sans-serif" font-size="22" font-weight="600" fill="#57c7ed" letter-spacing="3">DECENTRALIZED NAMING PROTOCOL</text>
+
+  <text x="80" y="360" font-family="IBM Plex Sans, -apple-system, sans-serif" font-size="88" font-weight="700" fill="url(#title)" letter-spacing="-3">Replace the</text>
+  <text x="80" y="460" font-family="IBM Plex Sans, -apple-system, sans-serif" font-size="88" font-weight="700" fill="url(#title)" letter-spacing="-3">DNS root zone</text>
+
+  <text x="80" y="540" font-family="IBM Plex Sans, -apple-system, sans-serif" font-size="24" font-weight="400" fill="#a1a1aa">Memory-hard PoW  ·  On-chain Vickrey auctions  ·  No pre-mine</text>
+
+  <text x="80" y="585" font-family="IBM Plex Mono, monospace" font-size="18" font-weight="500" fill="#71717a">fistbump.org</text>
+  <rect x="1070" y="572" width="60" height="24" rx="12" fill="none" stroke="#57c7ed" stroke-opacity="0.6" stroke-width="1.5"/>
+  <text x="1100" y="589" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="700" fill="#57c7ed" text-anchor="middle" letter-spacing="1">LIVE</text>
+</svg>

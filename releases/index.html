@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#09090b">
+
+<title>Fistbump Downloads — Node, Wallet, Browser Extension, Explorer</title>
+<meta name="description" content="Downloads for the Fistbump ecosystem: fbd (full node), desktop and mobile wallet, browser extension, atomic swap, and block explorer. Every platform, every architecture.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="canonical" href="https://fistbump.org/releases/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Fistbump">
+<meta property="og:title" content="Fistbump Downloads">
+<meta property="og:description" content="Downloads for the Fistbump ecosystem: fbd, wallet, browser extension, explorer.">
+<meta property="og:url" content="https://fistbump.org/releases/">
+<meta property="og:image" content="https://fistbump.org/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fistbump Downloads">
+<meta name="twitter:description" content="Downloads for the Fistbump ecosystem.">
+<meta name="twitter:image" content="https://fistbump.org/img/og-image.png">
+
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Fistbump" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fistbump.css">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/docs.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": "https://fistbump.org/releases/",
+  "name": "Fistbump Downloads",
+  "description": "Downloads for every component of the Fistbump ecosystem: fbd full node, wallet, browser extension, and supporting tools.",
+  "url": "https://fistbump.org/releases/",
+  "publisher": { "@type": "Organization", "name": "Fistbump", "url": "https://fistbump.org/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fistbump.org/" },
+    { "@type": "ListItem", "position": 2, "name": "Downloads", "item": "https://fistbump.org/releases/" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="/" class="logo">
+      <svg class="logo-icon" width="28" height="28" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+        <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+        <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+          <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+        </g>
+      </svg>
+      <span class="logo-text">Fistbump</span>
+    </a>
+    <nav class="nav">
+      <a href="/#protocol">Protocol</a>
+      <a href="/#software">Software</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/whitepaper/">Whitepaper</a>
+      <a href="https://fbd.dev">Docs</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobileNav">
+  <a href="/#protocol">Protocol</a>
+  <a href="/#software">Software</a>
+  <a href="/faq/">FAQ</a>
+  <a href="/whitepaper/">Whitepaper</a>
+  <a href="/glossary/">Glossary</a>
+  <a href="https://fbd.dev">Docs</a>
+</nav>
+
+<main class="doc-shell">
+  <div class="container">
+    <div class="doc-layout">
+
+      <aside class="toc" aria-label="Table of contents">
+        <div class="toc-label">Components</div>
+        <ul>
+          <li><a href="#wallet">Wallet (desktop &amp; mobile)</a></li>
+          <li><a href="#fbd">fbd (full node)</a></li>
+          <li><a href="#extension">Browser extension</a></li>
+          <li><a href="#swap">Atomic swap</a></li>
+          <li><a href="#explorer">Block explorer</a></li>
+        </ul>
+      </aside>
+
+      <article class="doc-article">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">›</span>
+          <span class="current">Downloads</span>
+        </nav>
+
+        <span class="doc-eyebrow">Downloads</span>
+        <h1>Fistbump Downloads</h1>
+        <p class="doc-lead">Direct download links for every component of the Fistbump ecosystem. Binaries are served from <code>fistbump.org</code> and <code>fbd.dev</code>; source lives on GitHub.</p>
+
+        <section class="release" id="wallet">
+          <div class="release-meta">
+            <span class="release-tag">Wallet</span>
+            <span>Desktop + mobile · Swift</span>
+          </div>
+          <h3>Fistbump Wallet</h3>
+          <p>Manage FBC, register names, bid on auctions, and configure DNS records. Includes a built-in full node. Ships for macOS, Windows, Linux, Android, and iOS.</p>
+          <p>
+            <a href="/#software" class="btn btn-primary">Download</a>
+            <a href="https://github.com/fistbump-org/wallet" class="btn btn-outline" style="margin-left:8px">Source</a>
+          </p>
+        </section>
+
+        <section class="release" id="fbd">
+          <div class="release-meta">
+            <span class="release-tag">fbd</span>
+            <span>Full node · Swift</span>
+          </div>
+          <h3>fbd — Fistbump daemon</h3>
+          <p>The reference full node. Validates the chain, participates in P2P, serves authoritative DNS from chain state, and includes a wallet and miner. Controlled via <code>fbdctl</code> over JSON-RPC.</p>
+          <p>
+            <a href="https://fbd.dev" class="btn btn-primary">Download</a>
+            <a href="https://github.com/fistbump-org/fbd" class="btn btn-outline" style="margin-left:8px">Source</a>
+          </p>
+        </section>
+
+        <section class="release" id="extension">
+          <div class="release-meta">
+            <span class="release-tag">Extension</span>
+            <span>Browser · WebExtension</span>
+          </div>
+          <h3>Browser extension</h3>
+          <p>Adds a <code>window.fistbump</code> API to web pages so they can request signatures and send transactions through your desktop wallet. Talks to the wallet over native messaging — no HTTP, no open ports.</p>
+          <p>
+            <a href="https://chromewebstore.google.com/detail/gdmmlkmiogkhboacejgemhghamolgaol" class="btn btn-primary">Chrome Web Store</a>
+            <a href="https://addons.mozilla.org/addon/fistbump/" class="btn btn-outline" style="margin-left:8px">Firefox Add-ons</a>
+          </p>
+        </section>
+
+        <section class="release" id="swap">
+          <div class="release-meta">
+            <span class="release-tag">Swap</span>
+            <span>Atomic · Non-custodial</span>
+          </div>
+          <h3>Atomic Swap (FBC ↔ BTC)</h3>
+          <p>Swap FBC and BTC directly, peer to peer, with no middleman. Both sides lock funds into hash time-locked contracts on their respective chains. Either both claims succeed or both refunds succeed — nothing in between is possible.</p>
+          <p>
+            <a href="https://swap.fistbump.org" class="btn btn-primary">Open Swap</a>
+            <a href="https://github.com/fistbump-org/swap" class="btn btn-outline" style="margin-left:8px">Source</a>
+          </p>
+        </section>
+
+        <section class="release" id="explorer">
+          <div class="release-meta">
+            <span class="release-tag">Explorer</span>
+            <span>Web</span>
+          </div>
+          <h3>Block Explorer</h3>
+          <p>Browse blocks, transactions, names, and auctions. Public-facing read-only interface backed by a Fistbump full node.</p>
+          <p>
+            <a href="https://explorer.fistbump.org" class="btn btn-primary">Open Explorer</a>
+          </p>
+        </section>
+
+        <div class="next-steps">
+          <a class="next-card" href="/#software">
+            <div class="next-card-label">Main site</div>
+            <div class="next-card-title">Software section</div>
+            <div class="next-card-desc">Platform-specific downloads with auto-detection.</div>
+          </a>
+          <a class="next-card" href="https://github.com/fistbump-org">
+            <div class="next-card-label">Source</div>
+            <div class="next-card-title">GitHub organization</div>
+            <div class="next-card-desc">Every Fistbump repo and issue tracker.</div>
+          </a>
+        </div>
+
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo-row">
+          <svg width="24" height="24" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+            <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+            <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+              <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+            </g>
+          </svg>
+          <span>Fistbump</span>
+        </div>
+        <p class="footer-tagline">A memory-hard decentralized naming protocol.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Protocol</h4>
+        <a href="/whitepaper/">Whitepaper</a>
+        <a href="https://fbd.dev">Documentation</a>
+        <a href="https://explorer.fistbump.org">Block Explorer</a>
+        <a href="https://swap.fistbump.org">Atomic Swap</a>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <a href="/faq/">FAQ</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/vs-handshake/">vs. Handshake</a>
+        <a href="/vs-ens/">vs. ENS</a>
+        <a href="/vs-dns/">vs. DNS</a>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <a href="https://discord.com/invite/JgejsFYFGJ">Discord</a>
+        <a href="https://github.com/fistbump-org">GitHub</a>
+        <a href="/releases/">Downloads</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const toggle = document.getElementById('menuToggle');
+  const nav = document.getElementById('mobileNav');
+  toggle.addEventListener('click', () => {
+    nav.classList.toggle('open');
+    toggle.classList.toggle('open');
+    document.body.classList.toggle('nav-open');
+  });
+  document.querySelectorAll('.mobile-nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle.classList.remove('open');
+      document.body.classList.remove('nav-open');
+    });
+  });
+</script>
+
+</body>
+</html>

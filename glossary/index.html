@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#09090b">
+
+<title>Fistbump Glossary — Terms & Definitions for Decentralized Naming</title>
+<meta name="description" content="Glossary of Fistbump terms: Balloon Hashing, Urkel tree, Vickrey auction, covenants, DANE, DNSSEC, FBC, TLD, and more — each defined in plain English.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="canonical" href="https://fistbump.org/glossary/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Fistbump">
+<meta property="og:title" content="Fistbump Glossary">
+<meta property="og:description" content="Plain-English definitions of Fistbump protocol terms — Balloon Hashing, Urkel tree, Vickrey auction, DANE, DNSSEC, and more.">
+<meta property="og:url" content="https://fistbump.org/glossary/">
+<meta property="og:image" content="https://fistbump.org/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fistbump Glossary">
+<meta name="twitter:description" content="Plain-English definitions of Fistbump protocol terms.">
+<meta name="twitter:image" content="https://fistbump.org/img/og-image.png">
+
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Fistbump" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fistbump.css">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/docs.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "DefinedTermSet",
+  "@id": "https://fistbump.org/glossary/",
+  "name": "Fistbump Glossary",
+  "description": "Definitions of terms used in the Fistbump decentralized naming protocol.",
+  "hasDefinedTerm": [
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#balloon-hashing", "name": "Balloon Hashing", "description": "A provably memory-hard proof-of-work function that requires 512 MB of RAM per proof attempt. Used by Fistbump to reduce the economic advantage of ASICs and GPUs over commodity hardware.", "termCode": "balloon-hashing" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#bech32", "name": "Bech32", "description": "The address encoding used by Fistbump. Mainnet addresses use the human-readable part 'fb' (fb1q...). Bech32 has built-in error detection.", "termCode": "bech32" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#covenant", "name": "Covenant", "description": "A typed data structure attached to every transaction output that encodes the output's role in the naming protocol (OPEN, BID, REVEAL, REGISTER, UPDATE, RENEW, TRANSFER, REVOKE). Covenants enforce the auction state machine without a Turing-complete scripting runtime.", "termCode": "covenant" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#dane", "name": "DANE", "description": "DNS-Based Authentication of Named Entities. A TLSA DNS record type that lets a domain bind its TLS certificate to its DNS record, providing certificate validation without a certificate authority. Fistbump supports TLSA records natively on-chain.", "termCode": "dane" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#dns-root-zone", "name": "DNS Root Zone", "description": "The top of the Domain Name System hierarchy, managed by IANA and served by thirteen root server operators. Fistbump replaces this centrally managed zone with a public blockchain.", "termCode": "dns-root-zone" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#dnssec", "name": "DNSSEC", "description": "A set of extensions that cryptographically sign DNS records to prevent forgery. Fistbump uses DNSSEC proofs on-chain to gate premium (short) name registration, requiring proof of ownership of the corresponding ICANN domain.", "termCode": "dnssec" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#fbc", "name": "FBC", "description": "The native currency of Fistbump. 1 FBC = 1,000,000 bumps. Total supply: 1,051,200,000 FBC. Genesis block reward burned; no pre-mine, ICO, or airdrop.", "termCode": "fbc" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#fbd", "name": "fbd", "description": "The reference Fistbump full node implementation. Written in Swift. Validates the chain, participates in P2P, serves authoritative DNS from chain state, and includes a wallet and CPU miner.", "termCode": "fbd" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#iana", "name": "IANA", "description": "The Internet Assigned Numbers Authority, a function of ICANN that manages the DNS root zone, IP address allocation, and other core internet identifiers. Fistbump replaces IANA's role in root zone management.", "termCode": "iana" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#icann", "name": "ICANN", "description": "The Internet Corporation for Assigned Names and Numbers, the non-profit that governs the domain name system. Accredited registrars charge $185,000 for new gTLD applications. All ICANN TLDs are reserved at Fistbump genesis to avoid collisions.", "termCode": "icann" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#memory-hard", "name": "Memory-hard", "description": "A function whose evaluation requires a large amount of memory, where memory cannot be traded for computation. Memory-hard proof-of-work narrows the efficiency gap between commodity hardware and specialized mining devices.", "termCode": "memory-hard" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#premium-name", "name": "Premium Name", "description": "In Fistbump, any name of 6 bytes or fewer. Opening an auction for a premium name requires a DNSSEC proof of ownership of the corresponding domain under a qualifying ICANN TLD (com, net, org, gov, io, app, dev, xyz).", "termCode": "premium-name" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#proof-of-work", "name": "Proof of Work (PoW)", "description": "A cryptographic puzzle that is hard to solve but easy to verify, used to secure a blockchain. Fistbump uses Balloon Hashing, a memory-hard PoW.", "termCode": "proof-of-work" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#subdomain", "name": "Subdomain", "description": "A name registered under a TLD. Fistbump supports fully on-chain subdomains (e.g. example.fistbump), each with independent ownership and renewal lifecycles. Enabled by a TLD owner via the auctionSubdomains flag.", "termCode": "subdomain" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#tld", "name": "Top-Level Domain (TLD)", "description": "The last segment of a domain name (e.g. .com, .org). In Fistbump, any name not reserved by ICANN can be registered as a TLD through a Vickrey auction.", "termCode": "tld" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#tlsa-record", "name": "TLSA Record", "description": "A DNS record type used by DANE to bind a TLS certificate to a domain name. TLSA records on Fistbump include port, protocol, usage, selector, and matching type.", "termCode": "tlsa-record" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#urkel-tree", "name": "Urkel Tree", "description": "A base-2 Merkleized radix trie used by Fistbump to store name state. Keys are 32-byte SHA3-256 hashes of names. The tree root is committed in every block header, enabling light clients to verify name ownership with compact inclusion and exclusion proofs.", "termCode": "urkel-tree" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#utxo", "name": "UTXO", "description": "Unspent Transaction Output. Fistbump uses a UTXO model like Bitcoin: every transaction consumes previous outputs and creates new ones. Every Fistbump UTXO carries a covenant encoding its role in the naming protocol.", "termCode": "utxo" },
+    { "@type": "DefinedTerm", "@id": "https://fistbump.org/glossary/#vickrey-auction", "name": "Vickrey Auction", "description": "A sealed-bid, second-price auction. The highest bidder wins but pays the second-highest bid. Makes truthful bidding the dominant strategy. Fistbump uses Vickrey auctions for all name registrations.", "termCode": "vickrey-auction" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fistbump.org/" },
+    { "@type": "ListItem", "position": 2, "name": "Glossary", "item": "https://fistbump.org/glossary/" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="/" class="logo">
+      <svg class="logo-icon" width="28" height="28" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+        <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+        <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+          <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+        </g>
+      </svg>
+      <span class="logo-text">Fistbump</span>
+    </a>
+    <nav class="nav">
+      <a href="/#protocol">Protocol</a>
+      <a href="/#software">Software</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/whitepaper/">Whitepaper</a>
+      <a href="https://fbd.dev">Docs</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobileNav">
+  <a href="/#protocol">Protocol</a>
+  <a href="/#software">Software</a>
+  <a href="/faq/">FAQ</a>
+  <a href="/whitepaper/">Whitepaper</a>
+  <a href="/glossary/">Glossary</a>
+  <a href="https://fbd.dev">Docs</a>
+</nav>
+
+<main class="doc-shell">
+  <div class="container">
+    <div class="doc-layout">
+
+      <aside class="toc" aria-label="Jump to letter">
+        <div class="toc-label">Jump to</div>
+        <ul>
+          <li><a href="#letter-b">B · Balloon, Bech32</a></li>
+          <li><a href="#letter-c">C · Covenant</a></li>
+          <li><a href="#letter-d">D · DANE, DNS, DNSSEC</a></li>
+          <li><a href="#letter-f">F · FBC, fbd</a></li>
+          <li><a href="#letter-i">I · IANA, ICANN</a></li>
+          <li><a href="#letter-m">M · Memory-hard</a></li>
+          <li><a href="#letter-p">P · Premium, PoW</a></li>
+          <li><a href="#letter-s">S · Subdomain</a></li>
+          <li><a href="#letter-t">T · TLD, TLSA</a></li>
+          <li><a href="#letter-u">U · Urkel, UTXO</a></li>
+          <li><a href="#letter-v">V · Vickrey</a></li>
+        </ul>
+      </aside>
+
+      <article class="doc-article">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">›</span>
+          <span class="current">Glossary</span>
+        </nav>
+
+        <span class="doc-eyebrow">Reference</span>
+        <h1>Glossary</h1>
+        <p class="doc-lead">Plain-English definitions of the concepts, data structures, and protocols that appear throughout Fistbump documentation.</p>
+
+        <div class="glossary-index" aria-label="Alphabetical index">
+          <a href="#letter-a" class="disabled">A</a>
+          <a href="#letter-b">B</a>
+          <a href="#letter-c">C</a>
+          <a href="#letter-d">D</a>
+          <a href="#letter-e" class="disabled">E</a>
+          <a href="#letter-f">F</a>
+          <a href="#letter-g" class="disabled">G</a>
+          <a href="#letter-h" class="disabled">H</a>
+          <a href="#letter-i">I</a>
+          <a href="#letter-j" class="disabled">J</a>
+          <a href="#letter-k" class="disabled">K</a>
+          <a href="#letter-l" class="disabled">L</a>
+          <a href="#letter-m">M</a>
+          <a href="#letter-n" class="disabled">N</a>
+          <a href="#letter-o" class="disabled">O</a>
+          <a href="#letter-p">P</a>
+          <a href="#letter-q" class="disabled">Q</a>
+          <a href="#letter-r" class="disabled">R</a>
+          <a href="#letter-s">S</a>
+          <a href="#letter-t">T</a>
+          <a href="#letter-u">U</a>
+          <a href="#letter-v">V</a>
+          <a href="#letter-w" class="disabled">W</a>
+          <a href="#letter-x" class="disabled">X</a>
+          <a href="#letter-y" class="disabled">Y</a>
+          <a href="#letter-z" class="disabled">Z</a>
+        </div>
+
+        <section class="glossary-group" id="letter-b">
+          <div class="glossary-letter">B</div>
+          <dl>
+            <div class="glossary-term">
+              <dt id="balloon-hashing">Balloon Hashing</dt>
+              <dd>A provably memory-hard proof-of-work function proposed by Boneh, Corrigan-Gibbs, and Schechter (ASIACRYPT 2016). Fistbump uses it with a 512 MB scratchpad per proof attempt. Unlike earlier memory-hard functions (Scrypt, Ethash), Balloon Hashing's memory-hardness is formally proven — memory cannot be traded for additional computation.</dd>
+            </div>
+            <div class="glossary-term">
+              <dt id="bech32">Bech32</dt>
+              <dd>The address encoding used by Fistbump. Mainnet addresses use the human-readable part <code>fb</code> (e.g. <code>fb1q...</code>). Bech32 has built-in error detection and readable-on-paper encoding.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="glossary-group" id="letter-c">
+          <div class="glossary-letter">C</div>
+          <dl>
+            <div class="glossary-term">
+              <dt id="covenant">Covenant</dt>
+              <dd>A typed data structure attached to every Fistbump transaction output that encodes the output's role in the naming protocol. Covenant types include <code>OPEN</code>, <code>BID</code>, <code>REVEAL</code>, <code>REDEEM</code>, <code>REGISTER</code>, <code>UPDATE</code>, <code>RENEW</code>, <code>TRANSFER</code>, <code>FINALIZE</code>, and <code>REVOKE</code>. Covenants enforce the auction state machine without a Turing-complete scripting runtime.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="glossary-group" id="letter-d">
+          <div class="glossary-letter">D</div>
+          <dl>
+            <div class="glossary-term">
+              <dt id="dane">DANE</dt>
+              <dd>DNS-Based Authentication of Named Entities. A mechanism (RFC 6698) that uses TLSA DNS records to bind TLS certificates to domain names, providing certificate validation without a certificate authority. Fistbump supports TLSA records natively on-chain, allowing DANE validation rooted in the blockchain rather than the web PKI.</dd>
+            </div>
+            <div class="glossary-term">
+              <dt id="dns">DNS</dt>
+              <dd>The Domain Name System. Maps human-readable names to IP addresses and is the entry point for nearly all internet communication. Fistbump serves standard DNS queries from its own root zone.</dd>
+            </div>
+            <div class="glossary-term">
+              <dt id="dns-root-zone">DNS Root Zone</dt>
+              <dd>The top of the DNS hierarchy, managed by IANA and served by thirteen root server operators. It delegates authority to TLD operators, who delegate to accredited registrars. Fistbump replaces this centrally managed zone with a public blockchain.</dd>
+            </div>
+            <div class="glossary-term">
+              <dt id="dnssec">DNSSEC</dt>
+              <dd>A set of extensions to DNS (RFC 4033-4035) that cryptographically sign DNS records to prevent forgery. Fistbump uses DNSSEC proofs on-chain to gate premium (short) name registration, requiring proof of ownership of the corresponding ICANN domain.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="glossary-group" id="letter-f">
+          <div class="glossary-letter">F</div>
+          <dl>
+            <div class="glossary-term">
+              <dt id="fbc">FBC</dt>
+              <dd>The native currency of Fistbump. 1 FBC = 1,000,000 bumps. Total supply is 1,051,200,000 FBC, with an initial block reward of 500 FBC halving every ~4 years. The genesis block reward is burned and there is no pre-mine, ICO, or airdrop.</dd>
+            </div>
+            <div class="glossary-term">
+              <dt id="fbd">fbd</dt>
+              <dd>The reference Fistbump full node implementation, written in Swift. Validates the chain, participates in P2P networking, serves authoritative DNS from chain state, and includes a wallet and built-in CPU miner. Controlled via the <code>fbdctl</code> CLI over JSON-RPC.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="glossary-group" id="letter-i">
+          <div class="glossary-letter">I</div>
+          <dl>
+            <div class="glossary-term">
+              <dt id="iana">IANA</dt>
+              <dd>The Internet Assigned Numbers Authority, a function of ICANN that manages the DNS root zone, IP address allocation, protocol parameter registries, and other core internet identifiers. Fistbump replaces IANA's role in root zone management.</dd>
+            </div>
+            <div class="glossary-term">
+              <dt id="icann">ICANN</dt>
+              <dd>The Internet Corporation for Assigned Names and Numbers, the non-profit that governs the domain name system. Delegates authority to hundreds of accredited registrars; a new generic TLD application costs $185,000. All existing ICANN TLDs are reserved at Fistbump genesis to avoid namespace collisions.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="glossary-group" id="letter-m">
+          <div class="glossary-letter">M</div>
+          <dl>
+            <div class="glossary-term">
+              <dt id="memory-hard">Memory-hard</dt>
+              <dd>A function whose evaluation requires a large amount of memory, where memory cannot be traded for additional computation. Memory-hard proof-of-work narrows the efficiency gap between commodity hardware and specialized mining devices because DRAM costs are similar whether on an ASIC package or in a desktop DIMM.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="glossary-group" id="letter-p">
+          <div class="glossary-letter">P</div>
+          <dl>
+            <div class="glossary-term">
+              <dt id="premium-name">Premium Name</dt>
+              <dd>In Fistbump, any name of 6 bytes or fewer. Opening an auction for a premium name requires a DNSSEC proof of ownership of the corresponding domain under a qualifying ICANN TLD: <code>com</code>, <code>net</code>, <code>org</code>, <code>gov</code>, <code>io</code>, <code>app</code>, <code>dev</code>, or <code>xyz</code>. Premium names are available at genesis and not subject to the rollout schedule.</dd>
+            </div>
+            <div class="glossary-term">
+              <dt id="proof-of-work">Proof of Work (PoW)</dt>
+              <dd>A cryptographic puzzle that is computationally expensive to solve but cheap to verify. Used to secure blockchains against Sybil attacks by binding block production to physical resource expenditure. Fistbump uses Balloon Hashing, a memory-hard PoW.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="glossary-group" id="letter-s">
+          <div class="glossary-letter">S</div>
+          <dl>
+            <div class="glossary-term">
+              <dt id="subdomain">Subdomain</dt>
+              <dd>A name registered under a TLD. Fistbump supports fully on-chain subdomains (e.g. <code>example.fistbump</code>), each with independent ownership, records, auction history, and renewal lifecycle. A TLD owner enables subdomain auctions by setting the <code>auctionSubdomains</code> flag, which is permanent once set.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="glossary-group" id="letter-t">
+          <div class="glossary-letter">T</div>
+          <dl>
+            <div class="glossary-term">
+              <dt id="tld">Top-Level Domain (TLD)</dt>
+              <dd>The last segment of a domain name (e.g. <code>.com</code>, <code>.org</code>). In Fistbump, any name not reserved by ICANN can be registered as a TLD through a Vickrey auction, subject to DNSSEC proof requirements for premium (short) names.</dd>
+            </div>
+            <div class="glossary-term">
+              <dt id="tlsa-record">TLSA Record</dt>
+              <dd>A DNS record type (RFC 6698) used by DANE to bind a TLS certificate to a domain name. Fistbump TLSA records include port (UInt16), protocol (TCP/UDP/SCTP), DANE usage, selector, matching type, and certificate data. The fbd DNS server synthesizes the standard DANE owner name (<code>_port._proto.name</code>) for TLSA queries.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="glossary-group" id="letter-u">
+          <div class="glossary-letter">U</div>
+          <dl>
+            <div class="glossary-term">
+              <dt id="urkel-tree">Urkel Tree</dt>
+              <dd>A base-2 Merkleized radix trie used by Fistbump to store name state. Keys are 32-byte SHA3-256 hashes of names. The tree root is committed in every block header, enabling light clients to verify name ownership and records with compact inclusion and exclusion proofs without downloading the full chain.</dd>
+            </div>
+            <div class="glossary-term">
+              <dt id="utxo">UTXO</dt>
+              <dd>Unspent Transaction Output. Fistbump uses a UTXO model like Bitcoin: every transaction consumes previous outputs and creates new ones. Every Fistbump UTXO carries a covenant encoding its role in the naming protocol.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="glossary-group" id="letter-v">
+          <div class="glossary-letter">V</div>
+          <dl>
+            <div class="glossary-term">
+              <dt id="vickrey-auction">Vickrey Auction</dt>
+              <dd>A sealed-bid, second-price auction. The highest bidder wins but pays the second-highest bid, making truthful bidding the dominant strategy. Fistbump uses Vickrey auctions for all name registrations, enforced entirely by on-chain covenants with a four-phase lifecycle: OPEN, BID, REVEAL, REGISTER.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <div class="next-steps">
+          <a class="next-card" href="/whitepaper/">
+            <div class="next-card-label">Read next</div>
+            <div class="next-card-title">Whitepaper</div>
+            <div class="next-card-desc">Full protocol specification and economic design.</div>
+          </a>
+          <a class="next-card" href="/faq/">
+            <div class="next-card-label">Questions</div>
+            <div class="next-card-title">FAQ</div>
+            <div class="next-card-desc">Answers to the most common questions about Fistbump.</div>
+          </a>
+        </div>
+
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo-row">
+          <svg width="24" height="24" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+            <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+            <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+              <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+            </g>
+          </svg>
+          <span>Fistbump</span>
+        </div>
+        <p class="footer-tagline">A memory-hard decentralized naming protocol.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Protocol</h4>
+        <a href="/whitepaper/">Whitepaper</a>
+        <a href="https://fbd.dev">Documentation</a>
+        <a href="https://explorer.fistbump.org">Block Explorer</a>
+        <a href="https://swap.fistbump.org">Atomic Swap</a>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <a href="/faq/">FAQ</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/vs-handshake/">vs. Handshake</a>
+        <a href="/vs-ens/">vs. ENS</a>
+        <a href="/vs-dns/">vs. DNS</a>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <a href="https://discord.com/invite/JgejsFYFGJ">Discord</a>
+        <a href="https://github.com/fistbump-org">GitHub</a>
+        <a href="/releases/">Downloads</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const toggle = document.getElementById('menuToggle');
+  const nav = document.getElementById('mobileNav');
+  toggle.addEventListener('click', () => {
+    nav.classList.toggle('open');
+    toggle.classList.toggle('open');
+    document.body.classList.toggle('nav-open');
+  });
+  document.querySelectorAll('.mobile-nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle.classList.remove('open');
+      document.body.classList.remove('nav-open');
+    });
+  });
+</script>
+
+</body>
+</html>

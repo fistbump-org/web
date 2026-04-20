@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#09090b">
+
+<title>Fistbump vs. Traditional DNS — Root Zone Replacement Without ICANN</title>
+<meta name="description" content="How Fistbump differs from the ICANN-managed DNS: no accredited registrars, no certificate authority dependence, native DANE, censorship resistance, and compatibility with existing DNS software.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="canonical" href="https://fistbump.org/vs-dns/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Fistbump">
+<meta property="og:title" content="Fistbump vs. Traditional DNS">
+<meta property="og:description" content="How Fistbump replaces the DNS root zone: no registrars, no certificate authority dependence, native DANE, censorship resistance.">
+<meta property="og:url" content="https://fistbump.org/vs-dns/">
+<meta property="og:image" content="https://fistbump.org/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fistbump vs. Traditional DNS">
+<meta name="twitter:description" content="How Fistbump replaces the DNS root zone: no registrars, no CA dependence, native DANE.">
+<meta name="twitter:image" content="https://fistbump.org/img/og-image.png">
+
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Fistbump" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fistbump.css">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/docs.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://fistbump.org/vs-dns/",
+  "headline": "Fistbump vs. Traditional DNS — Root Zone Replacement Without ICANN",
+  "description": "Comparison of Fistbump against the ICANN-managed DNS hierarchy across trust model, certificate validation, censorship resistance, and operational compatibility.",
+  "url": "https://fistbump.org/vs-dns/",
+  "image": "https://fistbump.org/img/og-image.png",
+  "inLanguage": "en-US",
+  "author": { "@type": "Organization", "name": "Fistbump", "url": "https://fistbump.org/" },
+  "publisher": { "@type": "Organization", "name": "Fistbump", "url": "https://fistbump.org/", "logo": { "@type": "ImageObject", "url": "https://fistbump.org/web-app-manifest-512x512.png" } },
+  "keywords": "Fistbump, DNS, ICANN, IANA, root zone, certificate authority, DNSSEC, DANE, censorship resistance, decentralized naming",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://fistbump.org/vs-dns/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fistbump.org/" },
+    { "@type": "ListItem", "position": 2, "name": "vs. DNS", "item": "https://fistbump.org/vs-dns/" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="/" class="logo">
+      <svg class="logo-icon" width="28" height="28" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+        <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+        <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+          <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+        </g>
+      </svg>
+      <span class="logo-text">Fistbump</span>
+    </a>
+    <nav class="nav">
+      <a href="/#protocol">Protocol</a>
+      <a href="/#software">Software</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/whitepaper/">Whitepaper</a>
+      <a href="https://fbd.dev">Docs</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobileNav">
+  <a href="/#protocol">Protocol</a>
+  <a href="/#software">Software</a>
+  <a href="/faq/">FAQ</a>
+  <a href="/whitepaper/">Whitepaper</a>
+  <a href="/glossary/">Glossary</a>
+  <a href="https://fbd.dev">Docs</a>
+</nav>
+
+<main class="doc-shell">
+  <div class="container">
+    <div class="doc-layout">
+
+      <aside class="toc" aria-label="Table of contents">
+        <div class="toc-label">On this page</div>
+        <ul>
+          <li><a href="#trust">The trust hierarchy</a></li>
+          <li><a href="#summary">Summary table</a></li>
+          <li><a href="#seizure">1. Domain seizure</a></li>
+          <li><a href="#registrars">2. Registrars</a></li>
+          <li><a href="#ca">3. Certificate authorities</a></li>
+          <li><a href="#dane">4. Native DANE</a></li>
+          <li><a href="#compat">5. Operational compatibility</a></li>
+          <li><a href="#costs">6. Costs</a></li>
+          <li><a href="#tradeoffs">Tradeoffs</a></li>
+        </ul>
+      </aside>
+
+      <article class="doc-article">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">›</span>
+          <span class="current">vs. DNS</span>
+        </nav>
+
+        <span class="doc-eyebrow">Protocol comparison</span>
+        <h1>Fistbump vs. Traditional DNS</h1>
+        <p class="doc-lead">The Domain Name System works. It is one of the most successful distributed systems ever built. But it depends on institutional trust — in IANA, in accredited registrars, in certificate authorities — and any of those parties can revoke a name on a phone call. Fistbump removes those trust assumptions.</p>
+
+        <h2 id="trust">The trust hierarchy</h2>
+        <p>Traditional DNS is a hierarchy of delegations. The root zone is managed by <a href="/glossary/#iana">IANA</a>, a function of <a href="/glossary/#icann">ICANN</a>. IANA delegates authority for each top-level domain to a registry operator. The registry operator delegates individual registrations to accredited registrars. The registrar's account holds your domain on your behalf.</p>
+        <p>Layered on top is the web PKI: certificate authorities issue TLS certificates to domain holders, and browsers trust any certificate signed by any CA in their root store. Any CA can issue a certificate for any domain.</p>
+        <p>The system is operationally reliable but has four documented classes of failure:</p>
+        <ul>
+          <li><strong>Domain seizure.</strong> The US Department of Justice has seized thousands of domains through civil forfeiture, including over 2,700 in a single 2020 operation.</li>
+          <li><strong>Infrastructure fragility.</strong> The 2016 Dyn DDoS attack took down Twitter, Reddit, and GitHub by targeting a single DNS provider.</li>
+          <li><strong>Barriers to entry.</strong> A new gTLD application costs $185,000, limiting participation to well-funded organizations.</li>
+          <li><strong>Certificate authority compromise.</strong> DigiNotar (2011), Symantec's mis-issuance (2017), and various subordinate-CA incidents have shown that the web PKI has structural weaknesses.</li>
+        </ul>
+        <p>Fistbump moves all four attack surfaces off of trusted third parties and into the blockchain's consensus rules.</p>
+
+        <h2 id="summary">Summary table</h2>
+
+        <div class="compare-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th class="fb-col">Fistbump</th>
+                <th>Traditional DNS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Root zone governance</td>
+                <td class="fb-col">Public blockchain (consensus rules)</td>
+                <td>IANA / ICANN</td>
+              </tr>
+              <tr>
+                <td>Name ownership</td>
+                <td class="fb-col"><span class="win">Private key on-chain</span></td>
+                <td>Registrar account</td>
+              </tr>
+              <tr>
+                <td>Seizure resistance</td>
+                <td class="fb-col"><span class="win">No party can revoke</span></td>
+                <td><span class="loss">Registrar, registry, or law enforcement can</span></td>
+              </tr>
+              <tr>
+                <td>New TLD cost</td>
+                <td class="fb-col">Vickrey bid (market-priced)</td>
+                <td><span class="loss">$185,000 application fee</span></td>
+              </tr>
+              <tr>
+                <td>Registration time</td>
+                <td class="fb-col">~7 days (auction cycle)</td>
+                <td>Minutes (existing TLDs)</td>
+              </tr>
+              <tr>
+                <td>Renewal costs</td>
+                <td class="fb-col">1% of registration, annually</td>
+                <td>$10–20 per year (typical)</td>
+              </tr>
+              <tr>
+                <td>DNS record types</td>
+                <td class="fb-col">Standard RFCs (A, AAAA, NS, MX, TLSA, CAA, ...)</td>
+                <td>Standard RFCs (same set)</td>
+              </tr>
+              <tr>
+                <td>Certificate validation</td>
+                <td class="fb-col"><span class="win">Native DANE — no CA needed</span></td>
+                <td>Web PKI (CA-dependent)</td>
+              </tr>
+              <tr>
+                <td>DNSSEC</td>
+                <td class="fb-col">Used for premium-name gating</td>
+                <td>Optional deployment</td>
+              </tr>
+              <tr>
+                <td>Client compatibility</td>
+                <td class="fb-col">Standard DNS over any recursive resolver</td>
+                <td>Standard DNS</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="seizure">1. Domain seizure</h2>
+        <p>In traditional DNS, a domain can be removed from you by multiple parties: the registrar can suspend your account; the registry can update its zone; a court order can compel the registry or registrar; ICANN can withdraw a registrar's accreditation; and IANA can change root zone delegations.</p>
+        <p>In Fistbump, name ownership is defined by which <a href="/glossary/#utxo">UTXO</a> the name is bound to. Control of that UTXO requires the private key. There is no account to suspend, no registry to lean on, no authority with unilateral revocation power. The only way your name can be taken is if you sign a <code>TRANSFER</code> covenant or let it expire.</p>
+        <p>This is a strong property, and it comes with a corresponding responsibility: you are on the hook for your own private key management. Lose the key, lose the name.</p>
+
+        <h2 id="registrars">2. Registrars</h2>
+        <p>ICANN-accredited registrars intermediate nearly every domain registration. They hold customer accounts, process payments, and submit the actual record changes to registry operators. They also create a business model where the per-domain margin is small and the incentive to automate abuse handling — sometimes by suspension — is large.</p>
+        <p>Fistbump has <strong>no registrars</strong>. Name registration is a direct transaction to the chain, submitted by any full node. The same software that validates blocks also submits auction covenants. There is no third party in the registration path.</p>
+
+        <h2 id="ca">3. Certificate authorities</h2>
+        <p>TLS certificates are issued by certificate authorities. Browsers trust any CA in their root store, which means any CA can issue a certificate for any domain. CAA records offer limited protection by letting a domain declare which CAs are permitted, but browsers do not check CAA — only the CAs do.</p>
+        <p>The DigiNotar breach in 2011 allowed attackers to issue valid certificates for <code>*.google.com</code> and other domains. Symantec's chronic mis-issuance led to Google distrusting its certificates in 2018. These are not hypothetical risks.</p>
+        <p>Fistbump supports <strong>DANE natively</strong> via on-chain TLSA records. A domain owner publishes a TLSA record binding their certificate (or the CA that issued it) to the name. A client that supports DANE can validate the certificate against the on-chain record without consulting any CA. This removes the CA from the trust path entirely.</p>
+
+        <h2 id="dane">4. Native DANE</h2>
+        <p>DANE (DNS-Based Authentication of Named Entities, RFC 6698) has existed for over a decade but has seen limited deployment in traditional DNS because it requires DNSSEC to be widely deployed — and DNSSEC deployment is uneven.</p>
+        <p>In Fistbump, the chain <em>is</em> the authentication. DNS records on-chain are authenticated by consensus, not by DNSSEC signatures over zone data. A TLSA record retrieved from any fbd node is cryptographically authentic provided the node's chain tip matches consensus. DANE becomes a first-class certificate model rather than an opt-in extension.</p>
+
+        <h2 id="compat">5. Operational compatibility</h2>
+        <p>Fistbump serves <strong>standard DNS</strong>. Any recursive resolver can be pointed at a Fistbump node. Any browser, email server, SSH client, or HTTP client can resolve Fistbump names. No client software change is required.</p>
+        <p>This is important: Fistbump is not a separate "alternative internet." It slots into the existing DNS resolution path at the root zone. Your ISP's resolver, your OS stub resolver, CloudFlare, Quad9 — any of them can, in principle, forward root-zone queries to a Fistbump-aware resolver chain.</p>
+
+        <h2 id="costs">6. Costs</h2>
+        <p>A typical <code>.com</code> domain costs $10–20/year via a registrar. A Fistbump regular TLD has a minimum bid of 10,000 FBC at genesis (halving with block rewards) and a renewal cost of 1% of the registration price annually.</p>
+        <p>At current mining costs and modest name demand, these are broadly comparable orders of magnitude. Premium names (6 bytes or fewer) are more expensive in Fistbump because they require a DNSSEC proof of ICANN-domain ownership and carry a 100× block-reward minimum bid.</p>
+
+        <h2 id="tradeoffs">Tradeoffs</h2>
+        <p>Fistbump does not solve every DNS problem, and it introduces tradeoffs that are important to be clear about:</p>
+        <ul>
+          <li><strong>Self-custody of names.</strong> Lose the key, lose the name. There is no registrar to reset your password.</li>
+          <li><strong>Chain tip dependency.</strong> A resolver needs a recent view of the chain (or a light-client proof) to answer authoritatively. Serving Fistbump from a stale tip is a resolution hazard.</li>
+          <li><strong>Bootstrapping.</strong> For Fistbump names to be universally resolvable, either major recursive resolvers need to forward queries to Fistbump-aware nameservers, or users need to configure their own. This is a network-effects problem that traditional DNS has already solved.</li>
+          <li><strong>Hash-rate security.</strong> Fistbump is as secure as the hash rate securing it. Memory-hard PoW broadens the pool of possible miners but does not eliminate concentration risk.</li>
+        </ul>
+        <p>These are real costs. Whether they are worth paying depends on how much you value unilateral revocation power <em>not</em> sitting with ICANN, a registrar, or a certificate authority.</p>
+
+        <div class="next-steps">
+          <a class="next-card" href="/vs-handshake/">
+            <div class="next-card-label">Compare</div>
+            <div class="next-card-title">vs. Handshake</div>
+            <div class="next-card-desc">How Fistbump differs from its closest architectural relative.</div>
+          </a>
+          <a class="next-card" href="/whitepaper/">
+            <div class="next-card-label">Dig deeper</div>
+            <div class="next-card-title">Whitepaper</div>
+            <div class="next-card-desc">Full protocol specification and economic design.</div>
+          </a>
+        </div>
+
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo-row">
+          <svg width="24" height="24" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+            <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+            <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+              <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+            </g>
+          </svg>
+          <span>Fistbump</span>
+        </div>
+        <p class="footer-tagline">A memory-hard decentralized naming protocol.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Protocol</h4>
+        <a href="/whitepaper/">Whitepaper</a>
+        <a href="https://fbd.dev">Documentation</a>
+        <a href="https://explorer.fistbump.org">Block Explorer</a>
+        <a href="https://swap.fistbump.org">Atomic Swap</a>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <a href="/faq/">FAQ</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/vs-handshake/">vs. Handshake</a>
+        <a href="/vs-ens/">vs. ENS</a>
+        <a href="/vs-dns/">vs. DNS</a>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <a href="https://discord.com/invite/JgejsFYFGJ">Discord</a>
+        <a href="https://github.com/fistbump-org">GitHub</a>
+        <a href="/releases/">Downloads</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const toggle = document.getElementById('menuToggle');
+  const nav = document.getElementById('mobileNav');
+  toggle.addEventListener('click', () => {
+    nav.classList.toggle('open');
+    toggle.classList.toggle('open');
+    document.body.classList.toggle('nav-open');
+  });
+  document.querySelectorAll('.mobile-nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle.classList.remove('open');
+      document.body.classList.remove('nav-open');
+    });
+  });
+
+  const links = document.querySelectorAll('.toc a');
+  const anchors = Array.from(links).map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+  const byId = new Map(Array.from(links).map(a => [a.getAttribute('href').slice(1), a]));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        byId.get(e.target.id)?.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-80px 0px -70% 0px' });
+  anchors.forEach(a => obs.observe(a));
+</script>
+
+</body>
+</html>

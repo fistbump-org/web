@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#09090b">
+
+<title>Fistbump vs. ENS — Native DNS, No Gas, Full Root Zone Replacement</title>
+<meta name="description" content="Detailed comparison of Fistbump and ENS (Ethereum Name Service): native DNS records vs. resolver records, gas-free operations, full TLDs vs. .eth subdomains, and independent blockchain vs. Ethereum smart contracts.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="canonical" href="https://fistbump.org/vs-ens/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Fistbump">
+<meta property="og:title" content="Fistbump vs. ENS">
+<meta property="og:description" content="How Fistbump differs from ENS: native DNS records, no gas fees, full root zone replacement.">
+<meta property="og:url" content="https://fistbump.org/vs-ens/">
+<meta property="og:image" content="https://fistbump.org/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fistbump vs. ENS">
+<meta name="twitter:description" content="How Fistbump differs from ENS: native DNS, no gas, full TLD registration.">
+<meta name="twitter:image" content="https://fistbump.org/img/og-image.png">
+
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Fistbump" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fistbump.css">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/docs.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://fistbump.org/vs-ens/",
+  "headline": "Fistbump vs. ENS — Native DNS, No Gas, Full Root Zone Replacement",
+  "description": "A detailed comparison of Fistbump and the Ethereum Name Service across record types, resolution, pricing, and architecture.",
+  "url": "https://fistbump.org/vs-ens/",
+  "image": "https://fistbump.org/img/og-image.png",
+  "inLanguage": "en-US",
+  "author": { "@type": "Organization", "name": "Fistbump", "url": "https://fistbump.org/" },
+  "publisher": { "@type": "Organization", "name": "Fistbump", "url": "https://fistbump.org/", "logo": { "@type": "ImageObject", "url": "https://fistbump.org/web-app-manifest-512x512.png" } },
+  "keywords": "Fistbump, ENS, Ethereum Name Service, decentralized naming, on-chain DNS, resolver records, gas fees, TLD registration",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://fistbump.org/vs-ens/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fistbump.org/" },
+    { "@type": "ListItem", "position": 2, "name": "vs. ENS", "item": "https://fistbump.org/vs-ens/" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="/" class="logo">
+      <svg class="logo-icon" width="28" height="28" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+        <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+        <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+          <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+        </g>
+      </svg>
+      <span class="logo-text">Fistbump</span>
+    </a>
+    <nav class="nav">
+      <a href="/#protocol">Protocol</a>
+      <a href="/#software">Software</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/whitepaper/">Whitepaper</a>
+      <a href="https://fbd.dev">Docs</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobileNav">
+  <a href="/#protocol">Protocol</a>
+  <a href="/#software">Software</a>
+  <a href="/faq/">FAQ</a>
+  <a href="/whitepaper/">Whitepaper</a>
+  <a href="/glossary/">Glossary</a>
+  <a href="https://fbd.dev">Docs</a>
+</nav>
+
+<main class="doc-shell">
+  <div class="container">
+    <div class="doc-layout">
+
+      <aside class="toc" aria-label="Table of contents">
+        <div class="toc-label">On this page</div>
+        <ul>
+          <li><a href="#what-is-ens">What ENS is</a></li>
+          <li><a href="#summary">Summary table</a></li>
+          <li><a href="#records">1. Records: DNS vs. resolver</a></li>
+          <li><a href="#resolution">2. Resolution path</a></li>
+          <li><a href="#tld">3. TLD vs. subdomain</a></li>
+          <li><a href="#gas">4. Gas and fees</a></li>
+          <li><a href="#consensus">5. Consensus &amp; security</a></li>
+          <li><a href="#governance">6. Governance</a></li>
+          <li><a href="#who-for">Which should you use?</a></li>
+        </ul>
+      </aside>
+
+      <article class="doc-article">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">›</span>
+          <span class="current">vs. ENS</span>
+        </nav>
+
+        <span class="doc-eyebrow">Protocol comparison</span>
+        <h1>Fistbump vs. ENS</h1>
+        <p class="doc-lead">ENS and Fistbump are often grouped together as "blockchain naming," but architecturally they are solving different problems. ENS is a wallet-and-content-addressing layer on Ethereum. Fistbump is a DNS root zone.</p>
+
+        <h2 id="what-is-ens">What ENS actually is</h2>
+        <p>The Ethereum Name Service is a set of smart contracts on Ethereum that maps human-readable names (primarily ending in <code>.eth</code>) to wallet addresses, content hashes, and arbitrary key-value pairs. It was launched in 2017.</p>
+        <p>Under the hood, ENS uses a <em>resolver pattern</em>: a registry contract maps each name to a resolver contract, and the resolver contract holds the actual records. A name can store things like:</p>
+        <ul>
+          <li>An Ethereum address (so you can send ETH to <code>alice.eth</code>)</li>
+          <li>A multi-coin address (BTC, SOL, etc.)</li>
+          <li>A content hash (IPFS, Swarm, Arweave)</li>
+          <li>A text record (avatar, email, URL)</li>
+        </ul>
+        <p>Importantly, ENS does <strong>not</strong> store DNS resource records (A, AAAA, MX, NS, TLSA, CAA). Resolving <code>alice.eth</code> in a normal browser does not return an IP address — it requires an ENS-aware resolver or browser extension.</p>
+
+        <h2 id="summary">Summary table</h2>
+
+        <div class="compare-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th class="fb-col">Fistbump</th>
+                <th>ENS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Architecture</td>
+                <td class="fb-col">Independent blockchain</td>
+                <td>Smart contracts on Ethereum</td>
+              </tr>
+              <tr>
+                <td>Records stored</td>
+                <td class="fb-col"><span class="win">Standard DNS (A, AAAA, NS, MX, TLSA, CAA, ...)</span></td>
+                <td>Resolver records (addr, text, contenthash)</td>
+              </tr>
+              <tr>
+                <td>Resolution</td>
+                <td class="fb-col"><span class="win">Any full node is an authoritative DNS server</span></td>
+                <td>Requires ENS-aware resolver or extension</td>
+              </tr>
+              <tr>
+                <td>Registerable namespace</td>
+                <td class="fb-col"><span class="win">Any TLD (subject to ICANN reservations)</span></td>
+                <td>Mostly <code>.eth</code> subdomains</td>
+              </tr>
+              <tr>
+                <td>Operation cost</td>
+                <td class="fb-col">FBC network fees (typically tiny)</td>
+                <td><span class="loss">Ethereum gas (variable, can be &gt;$50)</span></td>
+              </tr>
+              <tr>
+                <td>Registration model</td>
+                <td class="fb-col">Vickrey second-price auction</td>
+                <td>First-come, first-served</td>
+              </tr>
+              <tr>
+                <td>Consensus</td>
+                <td class="fb-col">Memory-hard PoW (Balloon Hashing)</td>
+                <td>Inherits Ethereum PoS</td>
+              </tr>
+              <tr>
+                <td>Smart contracts</td>
+                <td class="fb-col">None (typed covenants)</td>
+                <td>Solidity EVM</td>
+              </tr>
+              <tr>
+                <td>Token issuance</td>
+                <td class="fb-col">Mining only, no pre-mine</td>
+                <td>ENS governance token airdrop (2021)</td>
+              </tr>
+              <tr>
+                <td>Browser compatibility</td>
+                <td class="fb-col">Standard DNS resolver</td>
+                <td>Requires extension or compatible browser</td>
+              </tr>
+              <tr>
+                <td>Certificate model</td>
+                <td class="fb-col"><span class="win">Native DANE/TLSA on-chain</span></td>
+                <td>Web PKI (or DNSSEC import)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="records">1. Records: DNS vs. resolver</h2>
+        <p>This is the foundational difference. ENS stores <em>resolver records</em>: mappings keyed by a type identifier (<code>addr</code>, <code>text</code>, <code>contenthash</code>) with values interpreted by the ENS ecosystem. Fistbump stores <strong>DNS resource records</strong>: <code>A</code>, <code>AAAA</code>, <code>NS</code>, <code>MX</code>, <code>CNAME</code>, <code>TXT</code>, <code>TLSA</code>, <code>CAA</code>, <code>DS</code>, and glue records.</p>
+        <p>The consequence is that a Fistbump name is immediately addressable by anything that speaks DNS — web browsers, email servers, SSH clients, CDN providers, certificate validators. An ENS name needs to be wrapped in a layer that understands resolver records and maps them to whatever protocol is asking.</p>
+        <p>ENS has added DNSSEC-import support so that ICANN-TLD DNS records can be bridged into ENS, but this is fundamentally the opposite direction from Fistbump: ENS treats DNS as an external data source, while Fistbump <em>is</em> a DNS implementation.</p>
+
+        <h2 id="resolution">2. Resolution path</h2>
+        <p>Resolving <code>alice.eth</code> in a standard browser fails. The name is not in any DNS hierarchy that the OS stub resolver, the recursive resolver, or the TLD server know about. Resolution requires either:</p>
+        <ul>
+          <li>A browser extension (MetaMask, for example)</li>
+          <li>A browser with native ENS support (Brave, Opera)</li>
+          <li>A DNS-over-HTTPS service that reads ENS</li>
+        </ul>
+        <p>Fistbump resolves through <strong>any fbd full node</strong>. The node includes a built-in authoritative DNS server (default mainnet port 32870) that answers queries from on-chain state. Point your system resolver or a recursive resolver at a Fistbump node and Fistbump names become indistinguishable from ICANN names.</p>
+
+        <h2 id="tld">3. TLD vs. subdomain</h2>
+        <p>ENS names ending in <code>.eth</code> are <em>not</em> top-level domains — they are subdomains of <code>.eth</code>, which itself is registered nowhere in the ICANN hierarchy. This works inside the ENS ecosystem but does not interact with global DNS.</p>
+        <p>Fistbump registers <strong>true top-level domains</strong>. Any name (subject to ICANN reservations at genesis) can be registered as a TLD. A name like <code>fistbump</code> is a root-level name, resolvable as <code>example.fistbump</code> if the owner enables subdomains.</p>
+        <p>Fistbump also supports <a href="/glossary/#subdomain">on-chain subdomains</a> with independent ownership, so you can register <code>shop.example.fistbump</code> as its own chain-level name with its own auction history and renewal lifecycle.</p>
+
+        <h2 id="gas">4. Gas and fees</h2>
+        <p>Every ENS operation — registration, renewal, record update, transfer — is an Ethereum transaction and costs gas. Gas prices are volatile: updating a single record has cost anywhere from cents to tens of dollars depending on Ethereum congestion. This is a structural property of ENS, not an implementation detail.</p>
+        <p>Fistbump transactions pay network fees denominated in bumps (1 FBC = 1,000,000 bumps). Because Fistbump does not run a general-purpose VM, transaction validation is fast and cheap, and typical name operations cost a negligible amount of FBC in network fees.</p>
+
+        <h2 id="consensus">5. Consensus and security</h2>
+        <p>ENS inherits Ethereum's consensus. Its security is bounded by the security of the Ethereum validator set and the correctness of the ENS contracts. A bug in an ENS contract or a consensus change in Ethereum directly affects ENS.</p>
+        <p>Fistbump has its own consensus: memory-hard proof of work (<a href="/glossary/#balloon-hashing">Balloon Hashing</a>) with a 2-minute block time. Name state is stored in an <a href="/glossary/#urkel-tree">Urkel tree</a> whose root is committed in every block header, allowing light clients to verify name ownership and records without downloading the full chain.</p>
+        <p>Neither security model is strictly superior, but they are different: ENS is as secure as Ethereum; Fistbump is as secure as whatever hash rate secures its own chain.</p>
+
+        <h2 id="governance">6. Governance</h2>
+        <p>ENS has an on-chain governance process via the ENS DAO and the ENS governance token (airdropped in 2021). Protocol changes are proposed and voted on by token holders.</p>
+        <p>Fistbump has no governance token and no on-chain governance mechanism. Protocol changes require a hard fork. The development fund is disbursed from a multisig controlled by core contributors — a governance parameter but not a consensus-critical one. The signer set and threshold can change without a fork; the consensus rules cannot.</p>
+
+        <h2 id="who-for">Which should you use?</h2>
+        <p><strong>Use ENS</strong> if you want:</p>
+        <ul>
+          <li>A human-readable handle for your Ethereum wallet</li>
+          <li>Integration with the existing Ethereum and DApp ecosystem</li>
+          <li>A content-addressing layer pointing at IPFS or similar</li>
+        </ul>
+        <p><strong>Use Fistbump</strong> if you want:</p>
+        <ul>
+          <li>A real DNS name that resolves in any browser</li>
+          <li>Full TLDs (not <code>.eth</code> subdomains)</li>
+          <li>Certificate issuance via DANE without a CA</li>
+          <li>Predictable, tiny operation costs instead of Ethereum gas</li>
+          <li>A naming system that runs independently of any other blockchain</li>
+        </ul>
+
+        <div class="callout accent">
+          <div class="callout-title">Not mutually exclusive</div>
+          <p>You can run Fistbump for DNS and ENS for wallet addressing. They solve different problems.</p>
+        </div>
+
+        <div class="next-steps">
+          <a class="next-card" href="/vs-handshake/">
+            <div class="next-card-label">Compare</div>
+            <div class="next-card-title">vs. Handshake</div>
+            <div class="next-card-desc">The closest architectural sibling — shared heritage, different consensus.</div>
+          </a>
+          <a class="next-card" href="/vs-dns/">
+            <div class="next-card-label">Compare</div>
+            <div class="next-card-title">vs. traditional DNS</div>
+            <div class="next-card-desc">How Fistbump differs from the ICANN-managed root zone.</div>
+          </a>
+        </div>
+
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo-row">
+          <svg width="24" height="24" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+            <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+            <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+              <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+            </g>
+          </svg>
+          <span>Fistbump</span>
+        </div>
+        <p class="footer-tagline">A memory-hard decentralized naming protocol.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Protocol</h4>
+        <a href="/whitepaper/">Whitepaper</a>
+        <a href="https://fbd.dev">Documentation</a>
+        <a href="https://explorer.fistbump.org">Block Explorer</a>
+        <a href="https://swap.fistbump.org">Atomic Swap</a>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <a href="/faq/">FAQ</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/vs-handshake/">vs. Handshake</a>
+        <a href="/vs-ens/">vs. ENS</a>
+        <a href="/vs-dns/">vs. DNS</a>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <a href="https://discord.com/invite/JgejsFYFGJ">Discord</a>
+        <a href="https://github.com/fistbump-org">GitHub</a>
+        <a href="/releases/">Downloads</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const toggle = document.getElementById('menuToggle');
+  const nav = document.getElementById('mobileNav');
+  toggle.addEventListener('click', () => {
+    nav.classList.toggle('open');
+    toggle.classList.toggle('open');
+    document.body.classList.toggle('nav-open');
+  });
+  document.querySelectorAll('.mobile-nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle.classList.remove('open');
+      document.body.classList.remove('nav-open');
+    });
+  });
+
+  const links = document.querySelectorAll('.toc a');
+  const anchors = Array.from(links).map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+  const byId = new Map(Array.from(links).map(a => [a.getAttribute('href').slice(1), a]));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        byId.get(e.target.id)?.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-80px 0px -70% 0px' });
+  anchors.forEach(a => obs.observe(a));
+</script>
+
+</body>
+</html>

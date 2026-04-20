@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#09090b">
+
+<title>Fistbump Whitepaper — A Memory-Hard Decentralized Naming Protocol</title>
+<meta name="description" content="The Fistbump whitepaper: a production-ready replacement for the DNS root zone, built on memory-hard proof of work, on-chain Vickrey auctions, native DNS records, and native DANE certificate validation.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="canonical" href="https://fistbump.org/whitepaper/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Fistbump">
+<meta property="og:title" content="Fistbump Whitepaper">
+<meta property="og:description" content="A memory-hard decentralized naming protocol. Full specification: Balloon Hashing PoW, Vickrey auctions, on-chain DNS, Urkel tree, native DANE.">
+<meta property="og:url" content="https://fistbump.org/whitepaper/">
+<meta property="og:image" content="https://fistbump.org/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fistbump Whitepaper">
+<meta name="twitter:description" content="A memory-hard decentralized naming protocol. Full specification.">
+<meta name="twitter:image" content="https://fistbump.org/img/og-image.png">
+
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Fistbump" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/ibm-plex-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fistbump.css">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/docs.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://fistbump.org/whitepaper/",
+  "headline": "Fistbump: A Memory-Hard Decentralized Naming Protocol",
+  "alternativeHeadline": "Fistbump Whitepaper",
+  "description": "Specification of the Fistbump protocol: memory-hard proof of work, on-chain Vickrey auctions, native DNS records, Urkel tree state storage, and covenant-enforced name lifecycle.",
+  "url": "https://fistbump.org/whitepaper/",
+  "image": "https://fistbump.org/img/og-image.png",
+  "inLanguage": "en-US",
+  "author": { "@type": "Organization", "name": "Fistbump", "url": "https://fistbump.org/" },
+  "publisher": { "@type": "Organization", "name": "Fistbump", "url": "https://fistbump.org/", "logo": { "@type": "ImageObject", "url": "https://fistbump.org/web-app-manifest-512x512.png" } },
+  "keywords": "Fistbump, whitepaper, decentralized naming, Balloon Hashing, memory-hard PoW, Vickrey auction, Urkel tree, on-chain DNS, DANE, DNSSEC, covenants",
+  "articleSection": ["Background", "Protocol", "Consensus", "Naming System", "Covenants", "Currency", "Transactions", "Addresses", "State Storage", "Networking", "Cryptographic Primitives", "Security"],
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://fistbump.org/whitepaper/" },
+  "isAccessibleForFree": true
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fistbump.org/" },
+    { "@type": "ListItem", "position": 2, "name": "Whitepaper", "item": "https://fistbump.org/whitepaper/" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="/" class="logo">
+      <svg class="logo-icon" width="28" height="28" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+        <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+        <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+          <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+        </g>
+      </svg>
+      <span class="logo-text">Fistbump</span>
+    </a>
+    <nav class="nav">
+      <a href="/#protocol">Protocol</a>
+      <a href="/#software">Software</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/whitepaper/">Whitepaper</a>
+      <a href="https://fbd.dev">Docs</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobileNav">
+  <a href="/#protocol">Protocol</a>
+  <a href="/#software">Software</a>
+  <a href="/faq/">FAQ</a>
+  <a href="/whitepaper/">Whitepaper</a>
+  <a href="/glossary/">Glossary</a>
+  <a href="https://fbd.dev">Docs</a>
+</nav>
+
+<main class="doc-shell">
+  <div class="container">
+    <div class="doc-layout">
+
+      <aside class="toc" aria-label="Table of contents">
+        <div class="toc-label">Contents</div>
+        <ul>
+          <li><a href="#abstract">Abstract</a></li>
+          <li><a href="#background">1. Background</a></li>
+          <li><a href="#overview">2. Protocol Overview</a></li>
+          <li><a href="#consensus">3. Consensus</a></li>
+          <li><a href="#naming">4. Naming System</a></li>
+          <li><a href="#covenants">5. Covenants</a></li>
+          <li><a href="#fbc">6. Currency: FBC</a></li>
+          <li><a href="#transactions">7. Transactions</a></li>
+          <li><a href="#addresses">8. Addresses</a></li>
+          <li><a href="#urkel">9. State Storage</a></li>
+          <li><a href="#networking">10. Networking</a></li>
+          <li><a href="#crypto">11. Cryptographic Primitives</a></li>
+          <li><a href="#vs-handshake">12. vs. Handshake</a></li>
+          <li><a href="#security">13. Security</a></li>
+          <li><a href="#implementation">14. Implementation</a></li>
+          <li><a href="#conclusion">15. Conclusion</a></li>
+          <li><a href="#references">References</a></li>
+        </ul>
+      </aside>
+
+      <article class="doc-article prose">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">›</span>
+          <span class="current">Whitepaper</span>
+        </nav>
+
+        <span class="doc-eyebrow">Whitepaper</span>
+        <h1>Fistbump: A Memory-Hard Decentralized Naming Protocol</h1>
+        <p class="doc-lead">A public blockchain that registers human-readable top-level domains and on-chain subdomains, with native DNS record storage, memory-hard proof of work, and on-chain Vickrey auctions.</p>
+
+        <div class="callout accent">
+          <div class="callout-title">Canonical spec</div>
+          <p>This HTML version mirrors the canonical whitepaper. The authoritative text is <a href="/fistbump.txt">fistbump.txt</a> — a plain ASCII file suitable for cryptographic signing. If the two differ, the plain-text version wins.</p>
+        </div>
+
+        <h2 id="abstract">Abstract</h2>
+        <p>Fistbump is a decentralized naming protocol that registers human-readable top-level domains and on-chain subdomains on a public blockchain with native DNS record storage. It uses Balloon Hashing, a provably memory-hard proof-of-work function requiring 512 MB of RAM per proof attempt, designed to reduce the economic advantage of ASICs and GPUs. Names are allocated through Vickrey (sealed-bid, second-price) auctions with minimum bids tied to the block reward. Registration fees are split between a burn and a development fund; annual renewal fees prevent costless squatting and sustain protocol funding without pre-mines, airdrops, or token treasuries. The reference node, <code>fbd</code>, is written in Swift and includes a built-in authoritative DNS server that responds to standard DNS queries using on-chain records.</p>
+
+        <h2 id="background">1. Background</h2>
+
+        <h3 id="bg-root">1.1 The DNS Root Zone</h3>
+        <p>The Domain Name System maps human-readable names to machine-readable addresses and is the entry point for nearly all internet communication. The root zone is managed by IANA (a function of ICANN) and delegates authority to thirteen root server operators, hundreds of accredited registrars, and dozens of certificate authorities. This hierarchy creates known vulnerabilities:</p>
+        <ul>
+          <li><strong>Domain seizure.</strong> The US Department of Justice has seized thousands of domains through civil forfeiture.</li>
+          <li><strong>Infrastructure fragility.</strong> The 2016 Dyn DDoS attack disrupted Twitter, Reddit, GitHub, and other major services by targeting a single DNS provider.</li>
+          <li><strong>Barriers to entry.</strong> Applying for a new gTLD costs $185,000, limiting participation to well-funded organizations.</li>
+          <li><strong>Certificate authority compromise.</strong> The DigiNotar breach and Symantec mis-issuance incidents demonstrated weaknesses in the web PKI built on DNS. DANE/TLSA records, which Fistbump supports natively, offer certificate validation without trusted third parties.</li>
+        </ul>
+
+        <h3 id="bg-prior">1.2 Prior Work</h3>
+        <p>Several projects have attempted decentralized naming:</p>
+        <ul>
+          <li><strong>Namecoin (2011).</strong> A merge-mined Bitcoin fork with a <code>.bit</code> namespace outside the DNS hierarchy. Required special resolver software.</li>
+          <li><strong>ENS (2017).</strong> A naming layer for Ethereum that stores resolver records, not DNS records. Runs on Ethereum where gas fees make operations expensive. See <a href="/vs-ens/">Fistbump vs. ENS</a>.</li>
+          <li><strong>Handshake (2020).</strong> The most architecturally serious attempt, with native covenants, on-chain DNS records, and root zone replacement. Its BLAKE2b+SHA3 PoW was dominated by ASICs. Free renewals enabled costless squatting. See <a href="/vs-handshake/">Fistbump vs. Handshake</a>.</li>
+          <li><strong>Unstoppable Domains.</strong> NFT-based domains on Polygon with no DNS records. Names require browser extensions to resolve.</li>
+        </ul>
+
+        <h2 id="overview">2. Protocol Overview</h2>
+        <p>Fistbump is a <a href="/glossary/#utxo">UTXO</a>-based blockchain where every transaction output carries a covenant: a typed data structure that encodes the output's role in the naming protocol. Covenants enforce the state machine of name auctions (open, bid, reveal, register, update, renew, transfer) without complex scripting. Name state is stored in an <a href="/glossary/#urkel-tree">Urkel tree</a>, a Merkleized trie whose root is committed in every block header, enabling light clients to verify name ownership and DNS records with compact proofs. The proof-of-work function, <a href="/glossary/#balloon-hashing">Balloon Hashing</a>, requires 512 MB of RAM per attempt.</p>
+        <p>The <code>fbd</code> node includes a built-in authoritative DNS server. When a name is registered and its owner attaches DNS resource records, those records are stored on-chain and served in response to standard DNS queries. TLD owners can enable on-chain subdomain auctions, creating independent names (e.g., <code>example.fistbump</code>) with their own ownership, records, and lifecycle. All existing ICANN TLDs are reserved at genesis to avoid namespace collisions.</p>
+        <p>Key parameters: total supply of 1,051,200,000 FBC, initial block reward of 500 FBC, halving every four years, two-minute block time. No pre-mine, ICO, airdrop, or founder reward. Registration fees are split 50/50 between a burn and a development fund. Renewal fees are 1% of the registration price annually, floored at the minimum bid for that name's tier. The development fund is sent to a multisig address controlled by the core contributors — a governance parameter published by the project, not consensus-critical.</p>
+
+        <h3 id="overview-example">2.1 Example: Registering and Using a Name</h3>
+        <p>A walkthrough of the full lifecycle:</p>
+        <ol>
+          <li><strong>Mine or acquire FBC.</strong> Run <code>fbd</code>'s built-in CPU miner. Each proof attempt allocates a 512 MB scratchpad. A valid block earns the coinbase reward (500 FBC at genesis), spendable after 100 confirmations.</li>
+          <li><strong>Open an auction.</strong> Register "fbd" (3 bytes — premium). Provide a DNSSEC proof of ownership of <code>fbd.dev</code> and broadcast an <code>OPEN</code> covenant.</li>
+          <li><strong>Bid.</strong> During the 3-day bidding window, publish a blinded commitment: <code>blind = BLAKE2b-256(value || nonce)</code>. On-chain lockup: 80,000 FBC; actual bid: 60,000 FBC (minimum is 50,000).</li>
+          <li><strong>Reveal.</strong> During the 1-day reveal window, broadcast the nonce. A second bidder reveals 55,000 FBC.</li>
+          <li><strong>Register.</strong> Winner pays the second-highest bid (55,000 FBC). Excess (5,000 + 20,000 lockup surplus) is refunded. Of the 55,000 paid, 27,500 is burned and 27,500 goes to the dev fund. Attach DNS records at registration (A, AAAA, TLSA, etc.).</li>
+          <li><strong>Resolve.</strong> <code>dig @&lt;fbd-node&gt; fbd A</code> returns the on-chain record.</li>
+          <li><strong>Renew.</strong> Before ~1 year elapses, broadcast a <code>RENEW</code> covenant and pay 1% of 55,000 = 550 FBC.</li>
+        </ol>
+
+        <h2 id="consensus">3. Consensus</h2>
+
+        <h3 id="consensus-pow">3.1 Proof of Work: Balloon Hashing</h3>
+        <p>Fistbump uses <a href="/glossary/#balloon-hashing">Balloon Hashing</a>, a memory-hard algorithm proposed by Boneh, Corrigan-Gibbs, and Schechter (ASIACRYPT 2016). Unlike earlier memory-hard functions (Scrypt, Ethash) whose security relies on heuristic arguments, Balloon Hashing has a formal proof of memory hardness.</p>
+        <p>The algorithm operates in two phases:</p>
+        <ul>
+          <li><strong>Expand.</strong> A pseudorandom scratchpad is filled sequentially. Each 32-byte slot is derived from the previous slot and the input via BLAKE2b-256. The entire scratchpad must be allocated and populated before proceeding.</li>
+          <li><strong>Mix.</strong> The scratchpad is traversed again. Each slot is updated by hashing it with pseudorandomly selected neighbor slots, creating data dependencies across the entire scratchpad. These dependencies prevent time-memory trade-offs.</li>
+        </ul>
+        <p>Parameters:</p>
+<pre><code>Scratchpad slots:    16,777,216  (2^24 slots × 32 bytes = 512 MB)
+Mixing rounds:       1
+Neighbors per round: 1
+Inner hash:          BLAKE2b-256</code></pre>
+        <p>A block is valid when the PoW hash is numerically less than or equal to the target derived from the compact difficulty bits in the header.</p>
+
+        <h3 id="consensus-memory">3.2 Why Memory Hardness Raises the Cost of Specialized Hardware</h3>
+        <p>Bitcoin's SHA-256 moved from CPUs to ASICs within three years. Litecoin's Scrypt was defeated by Scrypt ASICs within two. Handshake's BLAKE2b+SHA3 was dominated by Bitmain within months. In every case, a compute-bound hash function was efficiently implemented in custom silicon.</p>
+        <p>Memory-hard functions shift the bottleneck from computation to memory bandwidth:</p>
+        <ul>
+          <li><strong>ASIC resistance.</strong> A 512 MB DRAM requirement per mining core is commodity — cost is similar on an ASIC package or a desktop DIMM.</li>
+          <li><strong>GPU resistance.</strong> GPUs parallelize through thousands of threads with small local memory (48-128 KB per SM). A 512 MB scratchpad per thread far exceeds this.</li>
+          <li><strong>FPGA resistance.</strong> FPGAs have less on-chip memory than GPUs and require external DRAM, limiting their advantage.</li>
+        </ul>
+
+        <h3 id="consensus-diff">3.3 Difficulty Adjustment</h3>
+        <p>Difficulty retargets every block using a 72-block sliding window. The algorithm selects the median-of-three blocks at window boundaries to resist timestamp manipulation, computes actual elapsed time, clamps it to between one quarter and four times the expected time, and adjusts the target proportionally. Per-block adjustment suits a memory-hard chain where hash rate is elastic.</p>
+
+        <h3 id="consensus-block">3.4 Block Structure</h3>
+        <p>Each block header is 236 bytes:</p>
+<pre><code>Preheader (76 bytes):
+  nonce            4 bytes    Miner-iterated counter
+  time             8 bytes    Unix timestamp
+  prevBlock       32 bytes    Hash of previous block
+  treeRoot        32 bytes    Urkel trie root
+
+Subheader (128 bytes):
+  extraNonce      24 bytes    Additional miner-malleable space
+  reservedRoot    32 bytes    Reserved for future use
+  witnessRoot     32 bytes    Witness commitment Merkle root
+  merkleRoot      32 bytes    Transaction Merkle root
+  version          4 bytes    Protocol version
+  bits             4 bytes    Compact difficulty target
+
+Mask (32 bytes):
+  mask            32 bytes    Reserved (zero-filled)</code></pre>
+        <p>Block weight = (header size × 4) + transaction size. Maximum block weight: 4,000,000. Maximum non-witness block size: 1,000,000 bytes.</p>
+
+        <h2 id="naming">4. Naming System</h2>
+
+        <h3 id="naming-rules">4.2 Name Rules</h3>
+<pre><code>Label length:       1-63 bytes per label
+Total length:       1-253 bytes (DNS maximum)
+Valid characters:   lowercase a-z, digits 0-9, hyphens
+Label separators:   dots (subdomains only)
+Case:               lowercase only (no Unicode)
+Blacklisted:        example, invalid, local, localhost, onion, test
+ICANN reserved:     All ICANN TLDs at genesis</code></pre>
+        <p>If ICANN later assigns a TLD matching an existing Fistbump name, the Fistbump registration is honored.</p>
+
+        <h3 id="naming-premium">4.3 Premium Names</h3>
+        <p>Names of 6 bytes or fewer are premium. Opening an auction for a premium name requires a DNSSEC proof of ownership under a qualifying ICANN TLD: <code>com</code>, <code>net</code>, <code>org</code>, <code>gov</code>, <code>io</code>, <code>app</code>, <code>dev</code>, or <code>xyz</code>. DNSSEC proofs are validated on-chain with a 3,600-second grace period for RRSIG validity. Premium names are available at genesis and not subject to rollout.</p>
+
+        <h3 id="naming-rollout">4.4 Name Rollout</h3>
+        <p>Non-premium names are released over 60 days to prevent a land rush:</p>
+<pre><code>day = SHA3-256(name) mod 60</code></pre>
+        <p>Rollout begins at block 10,080. A new batch becomes available every 720 blocks (~1 day).</p>
+
+        <h3 id="naming-auction">4.5 Auction Mechanism</h3>
+        <p>Names are allocated through Vickrey (sealed-bid, second-price) auctions:</p>
+<pre><code>Phase        Duration                 Action
+OPEN         30 blocks (~1 hour)      Broadcast OPEN covenant
+BID          2,160 blocks (~3 days)   Submit blind bids: BLAKE2b-256(value || nonce)
+REVEAL       720 blocks (~1 day)      Reveal nonces; unrevealed bids forfeited
+REGISTER     2,130 blocks (~71 hrs)   Winner registers, pays second-highest bid</code></pre>
+        <p>Total cycle: approximately 7 days. The on-chain lockup must be ≥ the actual bid; the difference is returned after reveal. Minimum bids:</p>
+<pre><code>Premium TLDs (≤6 bytes):  100× block reward  (50,000 FBC at genesis)
+Regular TLDs:              20× block reward  (10,000 FBC at genesis)
+Subdomains:               0.2× block reward  (100 FBC at genesis)</code></pre>
+
+        <h3 id="naming-post">4.6 Post-Registration Operations</h3>
+<pre><code>UPDATE      Change DNS records or set flags.
+RENEW       Extend for one year. Required within 262,800 blocks.
+            Fee: 1% of registration price, floored at minimum bid.
+TRANSFER    Initiate transfer. 360-block lockup (~12 hours).
+FINALIZE    Complete a pending transfer.
+REVOKE      Burn a name to prevent stolen-transfer completion.</code></pre>
+
+        <h3 id="naming-records">4.7 On-Chain DNS Records</h3>
+        <p>Registered names store standard DNS resource records on-chain:</p>
+<pre><code>DS       DNSSEC delegation signer
+NS       Name server delegation
+GLUE4    IPv4 glue record (for self-referential NS)
+GLUE6    IPv6 glue record
+SYNTH4   Synthetic IPv4 record
+SYNTH6   Synthetic IPv6 record
+TXT      Text record
+A        IPv4 address
+AAAA     IPv6 address
+CNAME    Canonical name alias
+MX       Mail exchange
+TLSA     TLS certificate association (DANE), with port + protocol
+CAA      Certificate Authority Authorization
+SUB      Inline subdomain record</code></pre>
+        <p>Maximum resource data per name: 512 bytes. The <code>fbd</code> node includes a built-in authoritative DNS server that resolves queries against on-chain state.</p>
+
+        <h3 id="naming-subdomains">4.8 On-Chain Subdomains</h3>
+        <p>Fistbump supports fully on-chain subdomains: names like <code>example.fistbump</code> and <code>shop.example.fistbump</code> registered, auctioned, and resolved entirely on-chain. Unlike traditional DNS subdomains, Fistbump subdomains are independent on-chain names with their own ownership, records, auction history, and renewal lifecycle. The parent cannot unilaterally revoke or modify a subdomain once registered.</p>
+        <p>A TLD owner enables subdomains by setting the <code>auctionSubdomains</code> flag via UPDATE. Once set, the flag is permanent. Subdomain registration fees are split:</p>
+<pre><code>Burn:       50% of the registration price
+Ancestors:  25%, split evenly among all ancestor owners
+Dev fund:   25%</code></pre>
+        <p>For <code>shop.example.fistbump</code>, the ancestors are <code>example.fistbump</code> and <code>fistbump</code> (12.5% each).</p>
+
+        <h2 id="covenants">5. Covenants</h2>
+        <p>Every transaction output carries a covenant: a typed data structure encoding the output's role in the naming protocol.</p>
+<pre><code>Type        Value   Purpose
+NONE          0     Standard value transfer
+OPEN          1     Initiate a name auction
+BID           2     Place a blind bid
+REVEAL        3     Reveal a bid
+REDEEM        4     Reclaim a losing bid
+REGISTER      5     Register a won name
+UPDATE        6     Update DNS records
+RENEW         7     Renew ownership
+TRANSFER      8     Initiate transfer
+FINALIZE      9     Complete a transfer
+REVOKE       10     Burn a name</code></pre>
+        <p>Covenants from REVEAL through REVOKE must reference the previous covenant output in the name's UTXO chain.</p>
+
+        <h2 id="fbc">6. Currency: FBC</h2>
+        <p>The native currency is FBC (Fistbump Coin). The smallest unit is one bump.</p>
+<pre><code>1 FBC = 1,000,000 bumps
+
+Initial block reward:   500 FBC
+Halving interval:       1,051,200 blocks (~4 years at 2-min blocks)
+Maximum halvings:       52
+Total supply:           1,051,200,000 FBC</code></pre>
+        <p>The genesis block reward is burned. Coinbase outputs require 100 confirmations before spending.</p>
+
+        <h2 id="transactions">7. Transactions</h2>
+        <p>Fistbump uses an all-witness transaction format with no legacy types. Each transaction contains version, inputs (previous outpoints and sequence numbers), outputs (value, address, covenant per output), locktime, and witnesses (one witness stack per input). Hashing uses BLAKE2b-256. Maximum transaction size: 1,000,000 bytes; maximum block weight: 4,000,000.</p>
+
+        <h2 id="addresses">8. Addresses</h2>
+        <p>All addresses use Bech32 encoding with a network-specific human-readable part:</p>
+<pre><code>Network     HRP     Example prefix
+mainnet     fb      fb1q...
+testnet     ft      ft1q...
+regtest     fr      fr1q...
+simnet      fs      fs1q...</code></pre>
+        <p>Witness programs: version 0 with 20-byte hash (P2WPKH, BLAKE2b-160 of compressed public key) or 32-byte hash (P2WSH, SHA3-256 of witness script). Versions 1–31 are reserved for future soft fork upgrades.</p>
+
+        <h2 id="urkel">9. State Storage: Urkel Tree</h2>
+        <p>Name state is stored in an Urkel tree, a base-2 Merkleized radix trie. Keys are 32-byte SHA3-256 hashes of names. Values are serialized NameState records containing the raw name, height, renewal, owner UTXO, value, data, flags, parentHash, and status fields.</p>
+        <p>The trie root is committed in the block header. The tree updates every 30 blocks (the tree interval), enabling light client verification without full chain download.</p>
+
+        <h2 id="networking">10. Networking</h2>
+        <p>Nodes communicate over TCP using a binary message protocol. Default ports:</p>
+<pre><code>Network     P2P      Brontide   RPC      DNS
+mainnet     32867    32868      32869    32870
+testnet     42867    42868      42869    42870
+regtest     52867    52868      52869    52870
+simnet      62867    62868      62869    62870</code></pre>
+        <p>Peer connections support Brontide, an encrypted transport based on the Noise protocol framework: <code>Noise_XK_secp256k1_ChaChaPoly_SHA256+SVDW_Squared</code>. Provides mutual authentication, forward secrecy, and encrypted traffic with key rotation every 1,000 messages.</p>
+
+        <h2 id="crypto">11. Cryptographic Primitives</h2>
+<pre><code>BLAKE2b-256         Block hashing, transaction hashing, PoW password, blind bids
+BLAKE2b-160         Public key hashing (P2WPKH addresses)
+SHA3-256            Name hashing, witness script hashing (P2WSH)
+secp256k1           Elliptic curve for signatures (ECDSA) and key agreement (ECDH)
+ChaCha20-Poly1305   Brontide peer-to-peer encryption
+BalloonHash         Proof-of-work (BLAKE2b-256 inner hash, 512 MB scratchpad)</code></pre>
+
+        <h2 id="vs-handshake">12. Comparison with Handshake</h2>
+        <p>Fistbump shares Handshake's covenant-based naming model, Urkel tree, and UTXO structure. Key differences are summarized below. For the full analysis, see <a href="/vs-handshake/">Fistbump vs. Handshake</a>.</p>
+
+        <div class="compare-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th class="fb-col">Fistbump</th>
+                <th>Handshake</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>PoW algorithm</td><td class="fb-col">Balloon Hash (512 MB)</td><td>BLAKE2b+SHA3</td></tr>
+              <tr><td>Hardware specialization</td><td class="fb-col">Memory-hard</td><td>Compute-bound (ASIC-dominated)</td></tr>
+              <tr><td>Block time</td><td class="fb-col">120 seconds</td><td>600 seconds</td></tr>
+              <tr><td>Total supply</td><td class="fb-col">~1.051 B FBC</td><td>~2.04 B HNS</td></tr>
+              <tr><td>Initial block reward</td><td class="fb-col">500 FBC</td><td>2,000 HNS</td></tr>
+              <tr><td>Halving interval</td><td class="fb-col">1,051,200 blocks</td><td>170,000 blocks</td></tr>
+              <tr><td>Premium name gate</td><td class="fb-col">DNSSEC required (≤6 bytes)</td><td>Alexa top 100k only</td></tr>
+              <tr><td>Registration fee split</td><td class="fb-col">50% burned, 50% dev fund</td><td>100% burned</td></tr>
+              <tr><td>Renewal fee</td><td class="fb-col">1% of price</td><td>0 (free)</td></tr>
+              <tr><td>Development fund</td><td class="fb-col">Registration + renewals</td><td>Airdrop (2.9% claimed)</td></tr>
+              <tr><td>On-chain subdomains</td><td class="fb-col">Yes</td><td>No</td></tr>
+              <tr><td>Node implementation</td><td class="fb-col">Swift</td><td>JavaScript / C++</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="security">13. Security Considerations</h2>
+
+        <h3 id="security-51">13.1 51% Attacks</h3>
+        <p>A miner controlling majority hash rate could reorganize the chain. Memory-hard PoW raises the capital cost by requiring large amounts of RAM rather than specialized chips. An attacker must acquire and operate many general-purpose computers, which is expected to be more expensive per unit of effective hashpower than an attack on an ASIC-dominated, compute-bound chain.</p>
+
+        <h3 id="security-squatting">13.2 Name Squatting</h3>
+        <p>Multiple mechanisms mitigate squatting: the 60-day rollout prevents a land rush at genesis; DNSSEC requirements protect short names; minimum bids prevent costless acquisition; and renewal fees create ongoing holding costs. Names not renewed within 262,800 blocks (~1 year) expire and reopen for auction.</p>
+
+        <h3 id="security-subdomains">13.3 Subdomain Sovereignty</h3>
+        <p>The <code>auctionSubdomains</code> flag is permanent once set. Both the flag and <code>parentHash</code> are preserved through name expiration, so subdomains function even if the parent expires. Delegation and SUB records are blocked when subdomain auctions are enabled, preventing resolution redirection or shadowing.</p>
+
+        <h2 id="implementation">14. Implementation</h2>
+        <p>The reference implementation is <code>fbd</code>, a full node written in <strong>Swift</strong>:</p>
+        <ul>
+          <li><code>fbd</code> — Full node with P2P networking, chain validation, mempool, CPU miner, DNS server, and JSON-RPC API.</li>
+          <li><code>fbdctl</code> — Command-line RPC client.</li>
+        </ul>
+        <p>Supports four networks (mainnet, testnet, regtest, simnet) on macOS, Linux, and Windows. Over 60 JSON-RPC methods for blockchain queries, wallet management, name auctions, mining, and network administration.</p>
+        <p>Source code: <a href="https://github.com/fistbump-org/fbd">github.com/fistbump-org/fbd</a>.</p>
+
+        <h2 id="conclusion">15. Conclusion</h2>
+        <p>Fistbump provides a complete naming hierarchy, from root to subdomain, on a blockchain secured by provably memory-hard proof of work. On-chain DNS records and a built-in authoritative server make names immediately resolvable through standard DNS query interfaces. Market-driven auctions, minimum bids, and renewal fees create sustainable economics without insider allocation. The result is a naming system designed to resist centralized control, secured by a mining design intended to raise the cost of hardware concentration.</p>
+
+        <h2 id="references">References</h2>
+        <ol>
+          <li>Boneh, D., Corrigan-Gibbs, H., Schechter, S. "Balloon Hashing: A Memory-Hard Function Providing Provable Protection Against Sequential Attacks." ASIACRYPT 2016.</li>
+          <li>Alwen, J., Serbinenko, V. "High Parallel Complexity Graphs and Memory-Hard Functions." STOC 2015.</li>
+          <li>Kalodner, H., Carlsten, M., Ellenbogen, P., Bonneau, J., Narayanan, A. "An Empirical Study of Namecoin and Lessons for Decentralized Namespace Design." WEIS 2015.</li>
+          <li>US Department of Justice. "Department of Justice Seizes 2,779 Internet Domain Names Engaged in Selling Counterfeit Goods." Press release, November 2020.</li>
+          <li>Hilton, S. "Dyn Analysis Summary Of Friday October 21 Attack." Dyn Blog, October 2016.</li>
+          <li>Fox-IT. "Black Tulip: Report of the Investigation into the DigiNotar Certificate Authority Breach." 2012.</li>
+          <li>O'Brien, D., Sleevi, R., Whalley, A. "Chrome's Plan to Distrust Symantec Certificates." Google Security Blog, September 2017.</li>
+          <li>Unstoppable Domains. US Patent Application 17/465,707, "Resolving Blockchain Domains." Filed 2021.</li>
+        </ol>
+
+        <div class="next-steps">
+          <a class="next-card" href="/faq/">
+            <div class="next-card-label">Questions</div>
+            <div class="next-card-title">FAQ</div>
+            <div class="next-card-desc">Answers to the most common questions about Fistbump.</div>
+          </a>
+          <a class="next-card" href="/glossary/">
+            <div class="next-card-label">Reference</div>
+            <div class="next-card-title">Glossary</div>
+            <div class="next-card-desc">Plain-English definitions of protocol terms.</div>
+          </a>
+          <a class="next-card" href="/fistbump.txt">
+            <div class="next-card-label">Plain text</div>
+            <div class="next-card-title">fistbump.txt</div>
+            <div class="next-card-desc">The canonical signed whitepaper as ASCII.</div>
+          </a>
+          <a class="next-card" href="https://github.com/fistbump-org/fbd">
+            <div class="next-card-label">Source</div>
+            <div class="next-card-title">fbd on GitHub</div>
+            <div class="next-card-desc">The reference Swift implementation.</div>
+          </a>
+        </div>
+
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo-row">
+          <svg width="24" height="24" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+            <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+            <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+              <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+            </g>
+          </svg>
+          <span>Fistbump</span>
+        </div>
+        <p class="footer-tagline">A memory-hard decentralized naming protocol.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Protocol</h4>
+        <a href="/whitepaper/">Whitepaper</a>
+        <a href="https://fbd.dev">Documentation</a>
+        <a href="https://explorer.fistbump.org">Block Explorer</a>
+        <a href="https://swap.fistbump.org">Atomic Swap</a>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <a href="/faq/">FAQ</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/vs-handshake/">vs. Handshake</a>
+        <a href="/vs-ens/">vs. ENS</a>
+        <a href="/vs-dns/">vs. DNS</a>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <a href="https://discord.com/invite/JgejsFYFGJ">Discord</a>
+        <a href="https://github.com/fistbump-org">GitHub</a>
+        <a href="/releases/">Downloads</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const toggle = document.getElementById('menuToggle');
+  const nav = document.getElementById('mobileNav');
+  toggle.addEventListener('click', () => {
+    nav.classList.toggle('open');
+    toggle.classList.toggle('open');
+    document.body.classList.toggle('nav-open');
+  });
+  document.querySelectorAll('.mobile-nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle.classList.remove('open');
+      document.body.classList.remove('nav-open');
+    });
+  });
+
+  const links = document.querySelectorAll('.toc a');
+  const anchors = Array.from(links).map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+  const byId = new Map(Array.from(links).map(a => [a.getAttribute('href').slice(1), a]));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        byId.get(e.target.id)?.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-80px 0px -70% 0px' });
+  anchors.forEach(a => obs.observe(a));
+</script>
+
+</body>
+</html>

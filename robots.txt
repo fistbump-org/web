@@ -1,0 +1,26 @@
+# Fistbump — https://fistbump.org
+
+User-agent: *
+Allow: /
+Disallow: /download/
+
+# AI crawlers (explicitly allow for AI visibility)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://fistbump.org/sitemap.xml
