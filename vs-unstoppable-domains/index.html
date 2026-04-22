@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#09090b">
+
+<title>Fistbump vs. Unstoppable Domains — Open Protocol, Native DNS, Open TLDs</title>
+<meta name="description" content="Detailed comparison: Fistbump is an open memory-hard naming protocol with native DNS records; Unstoppable Domains is a company selling NFT-based names with a proprietary resolution layer. Trust model, record types, namespace, and economics compared.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="canonical" href="https://fistbump.org/vs-unstoppable-domains/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Fistbump">
+<meta property="og:title" content="Fistbump vs. Unstoppable Domains">
+<meta property="og:description" content="How Fistbump differs from Unstoppable Domains: open protocol vs. company, native DNS vs. proprietary resolution, Vickrey auctions vs. fixed-price.">
+<meta property="og:url" content="https://fistbump.org/vs-unstoppable-domains/">
+<meta property="og:image" content="https://fistbump.org/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fistbump vs. Unstoppable Domains">
+<meta name="twitter:description" content="How Fistbump differs from Unstoppable Domains: open protocol, native DNS records, open namespace.">
+<meta name="twitter:image" content="https://fistbump.org/img/og-image.png">
+
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Fistbump" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fistbump.css">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/docs.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://fistbump.org/vs-unstoppable-domains/",
+  "headline": "Fistbump vs. Unstoppable Domains — Open Protocol, Native DNS, Open TLDs",
+  "description": "A detailed comparison of Fistbump and Unstoppable Domains across trust model, record format, namespace, resolution path, and economics.",
+  "url": "https://fistbump.org/vs-unstoppable-domains/",
+  "image": "https://fistbump.org/img/og-image.png",
+  "inLanguage": "en-US",
+  "author": { "@type": "Organization", "name": "Fistbump", "url": "https://fistbump.org/" },
+  "publisher": { "@type": "Organization", "name": "Fistbump", "url": "https://fistbump.org/", "logo": { "@type": "ImageObject", "url": "https://fistbump.org/web-app-manifest-512x512.png" } },
+  "keywords": "Fistbump, Unstoppable Domains, NFT domains, .crypto, .nft, .wallet, decentralized naming, on-chain DNS, Vickrey auction, namespace, web3 domains",
+  "about": [
+    { "@type": "Thing", "name": "Fistbump", "url": "https://fistbump.org/" },
+    { "@type": "Thing", "name": "Unstoppable Domains", "url": "https://unstoppabledomains.com/" }
+  ],
+  "datePublished": "2026-04-22",
+  "dateModified": "2026-04-22",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://fistbump.org/vs-unstoppable-domains/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fistbump.org/" },
+    { "@type": "ListItem", "position": 2, "name": "vs. Unstoppable Domains", "item": "https://fistbump.org/vs-unstoppable-domains/" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="/" class="logo">
+      <svg class="logo-icon" width="28" height="28" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+        <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+        <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+          <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+        </g>
+      </svg>
+      <span class="logo-text">Fistbump</span>
+    </a>
+    <nav class="nav">
+      <a href="/#protocol">Protocol</a>
+      <a href="/#software">Software</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/whitepaper/">Whitepaper</a>
+      <a href="https://fbd.dev">Docs</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobileNav">
+  <a href="/#protocol">Protocol</a>
+  <a href="/#software">Software</a>
+  <a href="/faq/">FAQ</a>
+  <a href="/whitepaper/">Whitepaper</a>
+  <a href="/glossary/">Glossary</a>
+  <a href="https://fbd.dev">Docs</a>
+</nav>
+
+<main class="doc-shell">
+  <div class="container">
+    <div class="doc-layout">
+
+      <aside class="toc" aria-label="Table of contents">
+        <div class="toc-label">On this page</div>
+        <ul>
+          <li><a href="#frames">Different frames</a></li>
+          <li><a href="#summary">Summary table</a></li>
+          <li><a href="#trust">1. Protocol vs. company</a></li>
+          <li><a href="#records">2. DNS records vs. proprietary</a></li>
+          <li><a href="#namespace">3. Open vs. closed namespace</a></li>
+          <li><a href="#economics">4. Auctions vs. fixed price</a></li>
+          <li><a href="#resolution">5. Resolution path</a></li>
+          <li><a href="#who-for">Which should you use?</a></li>
+        </ul>
+      </aside>
+
+      <article class="doc-article">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span class="sep">›</span>
+          <span class="current">vs. Unstoppable Domains</span>
+        </nav>
+
+        <span class="doc-eyebrow">Protocol comparison</span>
+        <h1>Fistbump vs. Unstoppable Domains</h1>
+        <p class="doc-lead">Both projects sell human-readable names that live on a blockchain, but the resemblance stops there. Fistbump is an open protocol designed to replace the DNS root zone. Unstoppable Domains is a US company selling NFTs in a proprietary namespace that resolves through its own software.</p>
+
+        <h2 id="frames">Different frames</h2>
+        <p>Comparing these two is uneasy because they are trying to solve different problems:</p>
+        <ul>
+          <li><strong>Fistbump</strong> is an attempt to build a neutral public good — a consensus-run replacement for the DNS root zone where any participant can register a top-level domain, mine, or operate a resolver, and no company sits at the center.</li>
+          <li><strong>Unstoppable Domains</strong> is a venture-backed company (Unstoppable Domains Inc., founded 2018) selling named NFTs on Polygon as a product. Names resolve through the company's browser extension, hosted resolvers, or wallet integrations that the company manages and distributes.</li>
+        </ul>
+        <p>If you want decentralized infrastructure, those are two very different things — even if both show up under search results for "Web3 domains."</p>
+
+        <h2 id="summary">Summary table</h2>
+
+        <div class="compare-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th class="fb-col">Fistbump</th>
+                <th>Unstoppable Domains</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Issuer</td>
+                <td class="fb-col"><span class="win">Open protocol (no issuer)</span></td>
+                <td>Unstoppable Domains Inc. (US company)</td>
+              </tr>
+              <tr>
+                <td>Record format</td>
+                <td class="fb-col"><span class="win">Standard DNS records (A, AAAA, NS, MX, CNAME, TXT, TLSA, CAA)</span></td>
+                <td>Proprietary resolver records (address, content hash, text)</td>
+              </tr>
+              <tr>
+                <td>Resolution</td>
+                <td class="fb-col"><span class="win">Any fbd node via stock DNS clients</span></td>
+                <td>UD browser extension, hosted resolver, or integrated wallet</td>
+              </tr>
+              <tr>
+                <td>Stock DNS compatible</td>
+                <td class="fb-col"><span class="win">Yes — standard UDP/TCP DNS</span></td>
+                <td><span class="loss">No — requires proprietary client or bridge</span></td>
+              </tr>
+              <tr>
+                <td>Certificate validation</td>
+                <td class="fb-col"><span class="win">Native TLSA (DANE) on-chain</span></td>
+                <td>Not native; depends on web PKI</td>
+              </tr>
+              <tr>
+                <td>Namespace</td>
+                <td class="fb-col"><span class="win">Any non-reserved TLD is registerable</span></td>
+                <td>Closed set of company-issued TLDs (.crypto, .nft, .wallet, .x, .bitcoin, .dao, .888, .zil, .blockchain, .polygon, …)</td>
+              </tr>
+              <tr>
+                <td>Registration model</td>
+                <td class="fb-col">Vickrey (sealed-bid, second-price) auction</td>
+                <td>Fixed-price direct sale set by the company</td>
+              </tr>
+              <tr>
+                <td>Price discovery</td>
+                <td class="fb-col"><span class="win">Market</span></td>
+                <td>Company-set</td>
+              </tr>
+              <tr>
+                <td>Renewals</td>
+                <td class="fb-col"><span class="win">1% of price annually (anti-squat)</span></td>
+                <td><span class="loss">None — one-time fee</span></td>
+              </tr>
+              <tr>
+                <td>Underlying network</td>
+                <td class="fb-col">Own memory-hard PoW chain (fbd)</td>
+                <td>NFT contracts (primarily Polygon)</td>
+              </tr>
+              <tr>
+                <td>Open source</td>
+                <td class="fb-col"><span class="win">Yes — Swift reference node</span></td>
+                <td>Partial — resolution layer is proprietary</td>
+              </tr>
+              <tr>
+                <td>Legal encumbrance</td>
+                <td class="fb-col"><span class="win">None</span></td>
+                <td>Patents filed on resolution mechanisms</td>
+              </tr>
+              <tr>
+                <td>Pre-mine / ICO / airdrop</td>
+                <td class="fb-col"><span class="win">None (genesis reward burned)</span></td>
+                <td>Company is venture-funded; names are products</td>
+              </tr>
+              <tr>
+                <td>Replaces DNS root zone</td>
+                <td class="fb-col"><span class="win">Yes — intent and architecture</span></td>
+                <td>No — parallel proprietary namespace</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="trust">1. Protocol vs. company</h2>
+        <p>Unstoppable Domains is a company. The TLDs it sells were chosen by the company, the resolution software is written and distributed by the company, the contracts are upgradable by addresses the company controls, and the continued usefulness of a name depends on the company continuing to operate the infrastructure and support the namespace. If the company is acquired, changes direction, or enters litigation that constrains its products, those choices flow through to name holders.</p>
+        <p>Fistbump has no company. The protocol is implemented by <code>fbd</code>, an open-source Swift node that anyone can run. There is no upgrade multisig, no admin key on names, and no party that can de-issue a name. A development fund funded by registration and renewal fees supports ongoing work, but it is a governance parameter rather than a consensus rule — changes to its signers or threshold do not require trust from name holders for their names to keep working.</p>
+
+        <h2 id="records">2. DNS records vs. proprietary resolution</h2>
+        <p>Unstoppable Domains names store resolver records — key-value data in a smart contract mapping fields like <code>crypto.ETH.address</code>, <code>dweb.ipfs.hash</code>, or free-form <code>text</code>. These are not DNS records. To resolve one, software must read the contract state and interpret the schema.</p>
+        <p>Fistbump names store <strong>standard DNS resource records</strong> directly on-chain: <code>A</code>, <code>AAAA</code>, <code>NS</code>, <code>MX</code>, <code>CNAME</code>, <code>TXT</code>, <code>TLSA</code>, <code>CAA</code>, <code>DS</code>, and the usual delegation records. Any <code>fbd</code> full node runs a built-in authoritative DNS server that answers standard UDP/TCP DNS queries using on-chain state. Point a recursive resolver at a node and it works — no extension, no bridge, no schema interpretation.</p>
+        <p>The practical consequence: Fistbump names work in every existing piece of internet software. Unstoppable Domains names work in the software the company has integrated with.</p>
+
+        <h2 id="namespace">3. Open vs. closed namespace</h2>
+        <p>Unstoppable Domains' namespace is a fixed set of company-issued TLDs — currently including <code>.crypto</code>, <code>.nft</code>, <code>.wallet</code>, <code>.x</code>, <code>.bitcoin</code>, <code>.dao</code>, <code>.888</code>, <code>.zil</code>, <code>.blockchain</code>, <code>.polygon</code>, and others. Adding a new TLD is a business decision by the company. Using a TLD outside that set is not possible.</p>
+        <p>Fistbump's namespace is open. Any name permitted by DNS rules (1–63-byte labels, lowercase ASCII, hyphens permitted) and not reserved by ICANN at genesis can be registered through the standard Vickrey auction. Premium names (≤6 bytes) require a DNSSEC proof of ownership of the corresponding domain under a qualifying ICANN TLD to prevent brand squatting.</p>
+
+        <h2 id="economics">4. Auctions vs. fixed price</h2>
+        <p>Unstoppable Domains prices names directly, with short or popular names priced higher by the company. Once a name is purchased, there are typically no mandatory renewals — the product is marketed as a one-time purchase.</p>
+        <p>Fistbump uses <strong>Vickrey (sealed-bid, second-price) auctions</strong>. Price is discovered by the market: a sealed bidding window, a reveal window, and a winner who pays the runner-up's bid. Truthful bidding is the dominant strategy. Holding a name then requires paying an annual renewal fee equal to 1% of the registration price, floored at the minimum bid for that name's tier. Unrenewed names expire and reopen for auction.</p>
+        <p>The renewal fee exists precisely because no-renewal models reward squatting. A speculator registering 10,000 names at cost carries no ongoing expense if renewals are free, so names sit forever regardless of demand. On Fistbump, names without demand lapse.</p>
+
+        <h2 id="resolution">5. Resolution path</h2>
+        <p>To resolve an Unstoppable Domains name, a client must either:</p>
+        <ul>
+          <li>Install the Unstoppable Domains browser extension,</li>
+          <li>Use a browser with native integration (Brave, Opera, Samsung Internet), or</li>
+          <li>Query a hosted resolver the company operates that bridges smart-contract state into DNS responses.</li>
+        </ul>
+        <p>To resolve a Fistbump name, a client points its DNS resolver at any <code>fbd</code> node. That is the whole procedure — no extension, no account, no JavaScript. Names resolve in <code>dig</code>, in the OS-level resolver, in mail clients, in TLS clients using DANE, and in any other DNS-aware software that already exists.</p>
+
+        <h2 id="who-for">Which should you use?</h2>
+        <p><strong>Unstoppable Domains</strong> makes sense if you want a one-time-purchase Web3 handle for crypto payments, already use the company's wallet or browser integrations, and are content with a namespace managed by a company.</p>
+        <p><strong>Fistbump</strong> makes sense if you want:</p>
+        <ul>
+          <li>A name that resolves through the existing DNS stack without any proprietary client.</li>
+          <li>A namespace that is not enumerable by a company — any non-reserved TLD is yours to bid on.</li>
+          <li>TLS/DANE certificate binding on-chain, without a certificate authority.</li>
+          <li>Economic pressure against squatting via annual renewals.</li>
+          <li>An infrastructure layer with no single party to subpoena, seize, or sue.</li>
+        </ul>
+
+        <div class="callout accent">
+          <div class="callout-title">Try it</div>
+          <p><a href="/#software">Download the wallet</a>, mine a block, and register a name. Mainnet is live.</p>
+        </div>
+
+        <div class="next-steps">
+          <a class="next-card" href="/vs-handshake/">
+            <div class="next-card-label">Compare</div>
+            <div class="next-card-title">vs. Handshake</div>
+            <div class="next-card-desc">Memory-hard PoW, renewal economics, and subdomain design.</div>
+          </a>
+          <a class="next-card" href="/vs-ens/">
+            <div class="next-card-label">Compare</div>
+            <div class="next-card-title">vs. ENS</div>
+            <div class="next-card-desc">Native DNS records vs. Ethereum resolver records.</div>
+          </a>
+        </div>
+
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo-row">
+          <svg width="24" height="24" viewBox="-100 -100 1224 1224" xmlns="http://www.w3.org/2000/svg">
+            <rect x="-100" y="-100" width="1224" height="1224" rx="220" fill="white"/>
+            <g transform="matrix(1.69935,0,0,1.69935,-337.675,-337.675)">
+              <path d="M362,664.616L391.107,575.58L589.761,575.58L597.951,550.384L717.331,550.384L680.011,664.616L362,664.616ZM668.125,335.384L788.125,335.384L721.215,540.384L601.216,540.384L668.125,335.384ZM460.556,565.384L535.625,335.384L655.625,335.384L580.573,565.384L460.556,565.384ZM328.056,565.384L403.125,335.384L523.125,335.384L448.057,565.384L328.056,565.384ZM270.625,335.384L390.625,335.384L331.876,515.384L211.875,515.384L270.625,335.384Z" fill="black" fill-rule="nonzero"/>
+            </g>
+          </svg>
+          <span>Fistbump</span>
+        </div>
+        <p class="footer-tagline">A memory-hard decentralized naming protocol.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Protocol</h4>
+        <a href="/whitepaper/">Whitepaper</a>
+        <a href="https://fbd.dev">Documentation</a>
+        <a href="https://explorer.fistbump.org">Block Explorer</a>
+        <a href="https://swap.fistbump.org">Atomic Swap</a>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <a href="/faq/">FAQ</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/vs-handshake/">vs. Handshake</a>
+        <a href="/vs-ens/">vs. ENS</a>
+        <a href="/vs-dns/">vs. DNS</a>
+        <a href="/vs-unstoppable-domains/">vs. Unstoppable Domains</a>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <a href="https://discord.com/invite/JgejsFYFGJ">Discord</a>
+        <a href="https://github.com/fistbump-org">GitHub</a>
+        <a href="/releases/">Releases</a>
+        <a href="/about/">About</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const toggle = document.getElementById('menuToggle');
+  const nav = document.getElementById('mobileNav');
+  toggle.addEventListener('click', () => {
+    nav.classList.toggle('open');
+    toggle.classList.toggle('open');
+    document.body.classList.toggle('nav-open');
+  });
+  document.querySelectorAll('.mobile-nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle.classList.remove('open');
+      document.body.classList.remove('nav-open');
+    });
+  });
+
+  const links = document.querySelectorAll('.toc a');
+  const anchors = Array.from(links).map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+  const byId = new Map(Array.from(links).map(a => [a.getAttribute('href').slice(1), a]));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        byId.get(e.target.id)?.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-80px 0px -70% 0px' });
+  anchors.forEach(a => obs.observe(a));
+</script>
+
+</body>
+</html>

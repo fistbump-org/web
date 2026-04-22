@@ -1,0 +1,43 @@
+# Fistbump
+
+> Fistbump is a permissionless, memory-hard blockchain designed as a production replacement for the DNS root zone. Every full node is an authoritative nameserver, names are registered through on-chain Vickrey (sealed-bid, second-price) auctions, and DNS resource records (A, AAAA, NS, MX, CNAME, TXT, TLSA, CAA) are stored directly on the blockchain. Mainnet is live. Genesis block reward burned; no pre-mine, no ICO, no airdrop, no founder reward.
+
+Key facts:
+- Proof of work: Balloon Hashing (provably memory-hard, 512 MB RAM per attempt)
+- Block time: 2 minutes
+- Total supply: 1,051,200,000 FBC
+- Initial block reward: 500 FBC, halving every 1,051,200 blocks (~4 years)
+- Name allocation: Vickrey (sealed-bid, second-price) auctions
+- Premium names (≤6 bytes): DNSSEC proof required under com/net/org/gov/io/app/dev/xyz
+- Renewal fee: 1% of registration price annually (to development fund)
+- Reference implementation: fbd, written in Swift
+- Native DANE (TLSA) certificate validation without a certificate authority
+- Address encoding: Bech32 with `fb` prefix on mainnet
+
+## Core documents
+
+- [About](https://fistbump.org/about/): Project overview, mission, principles, structure, funding, and contact
+- [Whitepaper (HTML)](https://fistbump.org/whitepaper/): Full protocol specification
+- [Whitepaper (plain text)](https://fistbump.org/fistbump.txt): Original whitepaper in UTF-8 plain text
+- [FAQ](https://fistbump.org/faq/): Frequently asked questions and answers
+- [Glossary](https://fistbump.org/glossary/): Plain-English definitions of protocol terms
+- [Consolidated reference](https://fistbump.org/llms-full.txt): FAQ, glossary, and comparison content concatenated for AI ingestion
+
+## Comparisons
+
+- [Fistbump vs. traditional DNS](https://fistbump.org/vs-dns/): Root zone replacement without ICANN or certificate authorities
+- [Fistbump vs. Handshake](https://fistbump.org/vs-handshake/): Memory-hard PoW, renewal fees, on-chain subdomains, Swift reference node
+- [Fistbump vs. ENS](https://fistbump.org/vs-ens/): Native DNS records, no gas, full root-zone replacement vs. Ethereum resolver records
+- [Fistbump vs. Unstoppable Domains](https://fistbump.org/vs-unstoppable-domains/): Open protocol vs. company-issued NFT namespace, standard DNS vs. proprietary resolution
+
+## Software
+
+- [Releases](https://fistbump.org/releases/): fbd full node, wallet, browser extension, explorer
+- [fbd.dev](https://fbd.dev): Reference full node (Swift) — docs, downloads, source
+- [explorer.fistbump.org](https://explorer.fistbump.org): Mainnet block explorer
+- [swap.fistbump.org](https://swap.fistbump.org): BTC ↔ FBC peer-to-peer atomic swap
+- [github.com/fistbump-org](https://github.com/fistbump-org): Source code (distribution is from fistbump.org, not GitHub releases)
+
+## Optional
+
+- [Homepage](https://fistbump.org/): Protocol overview, parameters, and software index

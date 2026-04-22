@@ -1,0 +1,415 @@
+Fistbump — Consolidated Reference for AI Ingestion
+====================================================
+
+This file concatenates the FAQ, glossary, and protocol-comparison content
+from fistbump.org into a single plain-text document for convenient crawling
+by AI systems. For the full protocol specification, see the whitepaper:
+
+  HTML:       https://fistbump.org/whitepaper/
+  Plain text: https://fistbump.org/fistbump.txt
+
+
+1. Overview
+-----------
+
+Fistbump is a permissionless, memory-hard blockchain designed as a
+production replacement for the DNS root zone. Every full node is an
+authoritative DNS nameserver. Names are registered through on-chain Vickrey
+(sealed-bid, second-price) auctions. DNS resource records (A, AAAA, NS, MX,
+CNAME, TXT, TLSA, CAA, and others) are stored directly on the blockchain.
+
+The genesis block reward is burned. There is no pre-mine, no ICO, no
+airdrop, and no founder reward. Every FBC in circulation was mined by
+someone running the same software available to everyone else.
+
+The reference full node implementation, fbd, is written in Swift and
+includes a built-in CPU miner, wallet, and authoritative DNS server.
+
+Core parameters:
+
+  Hash algorithm:       Balloon Hashing (BLAKE2b-256 inner hash)
+  Memory per attempt:   512 MB (2^24 slots x 32 bytes)
+  Block time:           120 seconds
+  Total supply:         1,051,200,000 FBC
+  Initial block reward: 500 FBC
+  Halving interval:     1,051,200 blocks (~4 years)
+  Difficulty window:    72 blocks
+  Coinbase maturity:    100 confirmations
+  Address encoding:     Bech32 (mainnet HRP: fb)
+  Max block weight:     4,000,000
+
+
+2. FAQ
+------
+
+Q: What is Fistbump?
+A: Fistbump is a permissionless, memory-hard blockchain designed as a
+production replacement for the DNS root zone. Every full node is an
+authoritative nameserver, names are registered through on-chain Vickrey
+auctions, and DNS records (A, AAAA, NS, MX, CNAME, TXT, TLSA, CAA) are
+stored directly on the blockchain. There is no pre-mine, no ICO, and no
+registrar.
+
+Q: How is Fistbump different from traditional DNS?
+A: Traditional DNS is a hierarchy controlled by IANA (a function of ICANN)
+through accredited registrars and certificate authorities. Any of those
+parties can seize a domain, suspend an account, or mis-issue a certificate.
+Fistbump replaces that hierarchy with a public blockchain: names are owned
+by whoever controls the private key, DNS records are served by any full
+node, and there is no party with unilateral revocation power.
+
+Q: How does Fistbump compare to Handshake (HNS)?
+A: Fistbump shares Handshake's covenant-based naming model and Urkel tree
+structure, but differs in several ways: memory-hard Balloon Hashing PoW
+(vs. ASIC-dominated BLAKE2b+SHA3), 2-minute block time (vs. 10-minute),
+renewal fees priced at 1% of the registration cost to prevent costless
+squatting (vs. free renewals), DNSSEC-based premium-name gating, native
+on-chain subdomains with payment splitting to ancestor owners, and a
+reference node written in Swift. There was no airdrop in Fistbump.
+
+Q: How does Fistbump compare to ENS?
+A: ENS (Ethereum Name Service) is a naming layer on Ethereum that stores
+resolver records rather than DNS records. .eth names are not top-level
+domains, they require special resolver software, and every operation costs
+Ethereum gas. Fistbump is its own blockchain with native DNS record types,
+is a full root-zone replacement (any TLD is registerable subject to ICANN
+reservations), and DNS queries resolve through any full node.
+
+Q: Is there a pre-mine, ICO, or founder allocation?
+A: No. The genesis block reward is burned. There is no pre-mine, no ICO,
+no airdrop, and no founder reward. Every FBC in circulation was mined by
+someone running the same software available to everyone else. A portion of
+name registration and renewal fees is sent to a development fund multisig,
+which is a governance parameter and not consensus-critical.
+
+Q: What is Balloon Hashing and why does Fistbump use it?
+A: Balloon Hashing is a provably memory-hard proof-of-work function
+(Boneh, Corrigan-Gibbs, Schechter, ASIACRYPT 2016). It requires 512 MB of
+RAM per proof attempt, and its memory-hardness cannot be traded for
+computation. This shifts the mining bottleneck from computation to memory
+bandwidth, making ASICs economically pointless and keeping mining
+accessible to commodity hardware. Fistbump is the only live naming
+protocol using a provably memory-hard PoW.
+
+Q: How do I mine FBC?
+A: Run the fbd full node. It includes a built-in CPU miner. Each proof
+attempt allocates a 512 MB scratchpad, so you need a machine with at least
+1 GB of free RAM. The initial block reward is 500 FBC per block, halving
+every 1,051,200 blocks (~4 years). Coinbase outputs require 100
+confirmations before they become spendable.
+
+Q: How do name auctions work?
+A: Names are allocated through Vickrey (sealed-bid, second-price) auctions
+enforced entirely by on-chain covenants. The lifecycle is: OPEN (start
+auction, ~1 hour), BID (submit blinded bid for 3 days), REVEAL (disclose
+true bid for 1 day), REGISTER (winner claims name and pays the
+second-highest bid). Truthful bidding is the dominant strategy because you
+pay the runner-up's bid, not your own.
+
+Q: What DNS record types does Fistbump support?
+A: Fistbump stores standard DNS resource records on-chain: A, AAAA, NS,
+MX, CNAME, TXT, TLSA (DANE), CAA, DS, GLUE4, GLUE6, SYNTH4, SYNTH6, and
+SUB (inline subdomains). Every fbd full node runs a built-in authoritative
+DNS server that responds to standard DNS queries using on-chain records.
+Point a recursive resolver at any node and it answers.
+
+Q: Can I register a name that already exists in ICANN DNS?
+A: All ICANN top-level domains are reserved at genesis to avoid namespace
+collisions. Premium names (6 bytes or fewer) require a DNSSEC proof
+demonstrating ownership of the corresponding domain under a qualifying
+ICANN TLD (com, net, org, gov, io, app, dev, xyz). This protects brand and
+identity holders from squatters.
+
+Q: What happens if I do not renew my name?
+A: Names must be renewed within 262,800 blocks (approximately one year).
+The renewal fee is 1% of the registration price, paid to the development
+fund, floored at the minimum bid for that name's tier. If you do not
+renew, the name expires and reopens for auction. Subdomains of an expired
+TLD continue to exist with independent renewal lifecycles.
+
+Q: Are on-chain subdomains supported?
+A: Yes. TLD owners can enable on-chain subdomains by setting the
+auctionSubdomains flag. Once set, the flag is permanent. Subdomains are
+registered through the same Vickrey auction mechanism with a minimum bid
+of 0.2x the block reward. Registration fees are split: 50% burned, 25% to
+ancestor owners, 25% to the development fund.
+
+Q: Does Fistbump work with my browser?
+A: Fistbump serves standard DNS. To resolve Fistbump names in a browser,
+point your system DNS resolver (or a recursive resolver) at a Fistbump
+node's DNS port (default 32870 on mainnet). The Fistbump browser extension
+adds a window.fistbump API for DApps and talks to the desktop wallet via
+native messaging — no HTTP, no open ports.
+
+Q: Is Fistbump mainnet live?
+A: Yes. Mainnet is live. You can download the wallet or fbd full node
+from fistbump.org, join the P2P network, mine FBC, and register names
+through the Vickrey auction process.
+
+Q: How do I trade FBC for BTC?
+A: Atomic Swap (swap.fistbump.org) lets you trade FBC and BTC
+peer-to-peer with no middleman. Both sides lock funds into hash
+time-locked contracts on their respective chains — either both claims
+succeed or both refunds succeed, with nothing possible in between.
+
+
+3. Glossary
+-----------
+
+Balloon Hashing
+  A provably memory-hard proof-of-work function that requires 512 MB of
+  RAM per proof attempt. Used by Fistbump to reduce the economic advantage
+  of ASICs and GPUs over commodity hardware.
+
+Bech32
+  The address encoding used by Fistbump. Mainnet addresses use the
+  human-readable part "fb" (fb1q...). Bech32 has built-in error detection.
+
+Covenant
+  A typed data structure attached to every transaction output that encodes
+  the output's role in the naming protocol (OPEN, BID, REVEAL, REGISTER,
+  UPDATE, RENEW, TRANSFER, REVOKE). Covenants enforce the auction state
+  machine without a Turing-complete scripting runtime.
+
+DANE
+  DNS-Based Authentication of Named Entities. A TLSA DNS record type that
+  lets a domain bind its TLS certificate to its DNS record, providing
+  certificate validation without a certificate authority. Fistbump
+  supports TLSA records natively on-chain.
+
+DNS Root Zone
+  The top of the Domain Name System hierarchy, managed by IANA and served
+  by thirteen root server operators. Fistbump replaces this centrally
+  managed zone with a public blockchain.
+
+DNSSEC
+  A set of extensions that cryptographically sign DNS records to prevent
+  forgery. Fistbump uses DNSSEC proofs on-chain to gate premium (short)
+  name registration, requiring proof of ownership of the corresponding
+  ICANN domain.
+
+FBC
+  The native currency of Fistbump. 1 FBC = 1,000,000 bumps. Total supply:
+  1,051,200,000 FBC. Genesis block reward burned; no pre-mine, ICO, or
+  airdrop.
+
+fbd
+  The reference Fistbump full node implementation. Written in Swift.
+  Validates the chain, participates in P2P, serves authoritative DNS from
+  chain state, and includes a wallet and CPU miner.
+
+IANA
+  The Internet Assigned Numbers Authority, a function of ICANN that
+  manages the DNS root zone, IP address allocation, and other core
+  internet identifiers. Fistbump replaces IANA's role in root zone
+  management.
+
+ICANN
+  The Internet Corporation for Assigned Names and Numbers, the non-profit
+  that governs the domain name system. Accredited registrars charge
+  $185,000 for new gTLD applications. All ICANN TLDs are reserved at
+  Fistbump genesis to avoid collisions.
+
+Memory-hard
+  A function whose evaluation requires a large amount of memory, where
+  memory cannot be traded for computation. Memory-hard proof-of-work
+  narrows the efficiency gap between commodity hardware and specialized
+  mining devices.
+
+Premium Name
+  In Fistbump, any name of 6 bytes or fewer. Opening an auction for a
+  premium name requires a DNSSEC proof of ownership of the corresponding
+  domain under a qualifying ICANN TLD (com, net, org, gov, io, app, dev,
+  xyz).
+
+Proof of Work (PoW)
+  A cryptographic puzzle that is hard to solve but easy to verify, used
+  to secure a blockchain. Fistbump uses Balloon Hashing, a memory-hard
+  PoW.
+
+Subdomain
+  A name registered under a TLD. Fistbump supports fully on-chain
+  subdomains (e.g. example.fistbump), each with independent ownership and
+  renewal lifecycles. Enabled by a TLD owner via the auctionSubdomains
+  flag.
+
+Top-Level Domain (TLD)
+  The last segment of a domain name (e.g. .com, .org). In Fistbump, any
+  name not reserved by ICANN can be registered as a TLD through a Vickrey
+  auction.
+
+TLSA Record
+  A DNS record type used by DANE to bind a TLS certificate to a domain
+  name. TLSA records on Fistbump include port, protocol, usage, selector,
+  and matching type.
+
+Urkel Tree
+  A base-2 Merkleized radix trie used by Fistbump to store name state.
+  Keys are 32-byte SHA3-256 hashes of names. The tree root is committed
+  in every block header, enabling light clients to verify name ownership
+  with compact inclusion and exclusion proofs.
+
+UTXO
+  Unspent Transaction Output. Fistbump uses a UTXO model like Bitcoin:
+  every transaction consumes previous outputs and creates new ones. Every
+  Fistbump UTXO carries a covenant encoding its role in the naming
+  protocol.
+
+Vickrey Auction
+  A sealed-bid, second-price auction. The highest bidder wins but pays
+  the second-highest bid. Makes truthful bidding the dominant strategy.
+  Fistbump uses Vickrey auctions for all name registrations.
+
+
+4. Fistbump vs. Handshake (HNS)
+--------------------------------
+
+Fistbump and Handshake share a covenant-based naming model, an Urkel-tree
+name state store, and a UTXO transaction structure. They differ on the
+following dimensions.
+
+  Property                  Fistbump                      Handshake
+  -------------------------------------------------------------------------------
+  PoW algorithm             Balloon Hash (512 MB)         BLAKE2b+SHA3
+  Hardware specialization   Memory-hard (reduced edge)    Compute-bound (ASIC-dominated)
+  Block time                120 seconds                   600 seconds
+  Difficulty window         72 blocks                     144 blocks
+  Total supply              ~1.051 billion FBC            ~2.04 billion HNS
+  Initial block reward      500 FBC                       2,000 HNS
+  Halving interval          1,051,200 blocks              170,000 blocks
+  Coinbase maturity         100 blocks                    100 blocks
+  Premium name gate         DNSSEC required (<=6 bytes)   Alexa top 100k only
+  Minimum bid (premium TLD) 100x block reward             0
+  Minimum bid (regular TLD) 20x block reward              0
+  Minimum bid (subdomain)   0.2x block reward             (n/a)
+  Registration fee split    50% burned, 50% dev fund      100% burned
+  Renewal fee               1% of price annually          0 (free renewals)
+  Development fund          Registration + renewals       Airdrop (2.9% claimed)
+  Tree update interval      30 blocks                     36 blocks
+  Address prefix            fb (mainnet)                  hs (mainnet)
+  On-chain subdomains       Yes (with ancestor payments)  No
+  Node implementation       Swift                         JavaScript / C++
+
+
+5. Fistbump vs. ENS
+-------------------
+
+ENS (Ethereum Name Service) is a resolver-record system built on Ethereum
+smart contracts. Fistbump is a standalone naming blockchain with native
+DNS record storage. Key differences:
+
+  - Record model. ENS stores resolver records (addr, contenthash, text
+    fields) that are interpreted by ENS-aware clients. Fistbump stores
+    standard DNS resource records (A, AAAA, NS, MX, CNAME, TXT, TLSA,
+    CAA) that resolve through standard DNS clients without modification.
+
+  - Namespace. ENS .eth names are a subtree of the ENS smart contract,
+    not true top-level domains. Fistbump registrations are TLDs in the
+    root zone (modulo ICANN reservations).
+
+  - Cost of operation. Every ENS action (registration, renewal, record
+    update, transfer) is an Ethereum transaction priced in gas, with
+    volatile fees. Fistbump fees are denominated in FBC and sized for the
+    naming operation itself.
+
+  - Resolution path. ENS names require ENS-aware resolvers, wallets, or
+    browser extensions. Fistbump names resolve through any fbd node's DNS
+    server using stock DNS clients.
+
+  - Certificate model. ENS has no native TLS binding. Fistbump supports
+    TLSA (DANE) records natively, enabling certificate validation without
+    a certificate authority.
+
+
+6. Fistbump vs. Traditional DNS
+-------------------------------
+
+Traditional DNS is a federated hierarchy rooted at IANA. Fistbump replaces
+the root zone with a public blockchain.
+
+  - Trust model. Traditional DNS trusts IANA, 13 root operators, hundreds
+    of accredited registrars, and dozens of certificate authorities. Any
+    one of those parties can seize, suspend, or mis-issue. Fistbump
+    replaces all of them with a consensus-run blockchain: name ownership
+    is possession of a private key.
+
+  - Certificate validation. Traditional DNS delegates TLS authentication
+    to certificate authorities whose failures (DigiNotar 2011, Symantec
+    mis-issuance) have been public. Fistbump supports DANE/TLSA records
+    natively on-chain, enabling certificate binding without a CA.
+
+  - Censorship. Domain seizures by governments (thousands of US DoJ
+    seizures) and registrar suspensions require a counterparty. Fistbump
+    has no counterparty to subpoena.
+
+  - Operational compatibility. Fistbump serves responses over standard
+    DNS protocol on UDP/TCP port 53 equivalents. A system DNS resolver
+    pointed at an fbd node answers without any proprietary software.
+
+  - Economic model. ICANN charges $185,000 to apply for a new gTLD.
+    Fistbump name registration costs a market-discovered Vickrey bid with
+    minimum bids tied to the block reward.
+
+
+7. Fistbump vs. Unstoppable Domains
+-----------------------------------
+
+Unstoppable Domains is a US-based company (Unstoppable Domains Inc.,
+founded 2018) that sells named NFTs on Polygon as a product. Fistbump is
+an open protocol intended to replace the DNS root zone. The two projects
+occupy a similar marketing category but differ on nearly every axis of
+substance.
+
+  - Issuer. Fistbump has no issuer; any participant can register a name
+    by auction. Unstoppable Domains Inc. issues all names, chooses the
+    TLDs, and controls the resolution software.
+
+  - Record format. Fistbump stores standard DNS resource records on-chain
+    (A, AAAA, NS, MX, CNAME, TXT, TLSA, CAA, etc.). Unstoppable Domains
+    stores proprietary resolver records (address, content hash, free-form
+    text) in a smart contract. These are not DNS records.
+
+  - Resolution path. Fistbump names resolve through any fbd node via
+    standard UDP/TCP DNS — no extension, bridge, or schema interpretation.
+    Unstoppable Domains names require the UD browser extension, a browser
+    with native integration (Brave, Opera, Samsung Internet), or a
+    company-operated hosted resolver.
+
+  - Certificate binding. Fistbump supports native TLSA (DANE) records
+    on-chain for certificate validation without a certificate authority.
+    Unstoppable Domains has no native TLS binding.
+
+  - Namespace. Fistbump is open: any name permitted by DNS rules and not
+    reserved by ICANN at genesis can be registered. Unstoppable Domains
+    is closed: a fixed set of company-issued TLDs (.crypto, .nft, .wallet,
+    .x, .bitcoin, .dao, .888, .zil, .blockchain, .polygon, etc.).
+
+  - Price discovery. Fistbump uses Vickrey (sealed-bid, second-price)
+    auctions priced by the market. Unstoppable Domains sets prices
+    directly; short names are priced higher by the company.
+
+  - Renewals. Fistbump charges 1% of registration price annually to
+    prevent costless squatting. Unstoppable Domains markets names as
+    one-time purchases with no mandatory renewals.
+
+  - Legal encumbrance. Fistbump has none. Unstoppable Domains has filed
+    patents on its resolution mechanisms.
+
+  - Funding model. Fistbump has no investors and no token treasury;
+    development is funded by on-chain registration and renewal fees.
+    Unstoppable Domains is venture-backed, and name sales are the
+    company's product revenue.
+
+
+8. Further Reading
+------------------
+
+  About the project:     https://fistbump.org/about/
+  Full specification:    https://fistbump.org/whitepaper/
+  Plain-text whitepaper: https://fistbump.org/fistbump.txt
+  FAQ:                   https://fistbump.org/faq/
+  Glossary:              https://fistbump.org/glossary/
+  Source:                https://github.com/fistbump-org/fbd
+  Reference node docs:   https://fbd.dev
+  Block explorer:        https://explorer.fistbump.org
+  Atomic swap (BTC-FBC): https://swap.fistbump.org
